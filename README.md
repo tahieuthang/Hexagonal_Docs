@@ -356,7 +356,21 @@ Khi hệ thống yêu cầu nhiều nghiệp vụ, nhiều use case, dễ biến
 -	Giúp core ổn định lâu dài
 -	Giảm rủi ro khi thay đổi yêu cầu nghiệp vụ
 
-Trong các hệ thống như tài chính, e-commerce hoặc các nền tảng có nhiều bước xử lý nghiệp vụ, logic thường phức tạp và dễ biến động. Nếu business logic bị trộn lẫn với framework, database hoặc API layer, mỗi thay đổi nhỏ có thể ảnh hưởng dây chuyền.
+Ví dụ kịch bản thực tế: Hệ thống thanh toán
+
+* **Hệ thống ban đầu:**
+    * REST API
+    * MySQL
+    * Business logic nằm trong controller/service
+
+* **Sau một thời gian vận hành, phát sinh yêu cầu:**
+    * Thêm message consumer để xử lý bất đồng bộ
+    * Migrating từ MySQL sang PostgreSQL
+    * Bổ sung CLI tool cho internal team
+  
+Nếu business logic nằm trong controller/repository, mỗi thay đổi sẽ lan rộng và gây rủi ro.
+
+Với Hexagonal, core được cô lập và ổn định. Việc thay đổi công nghệ hoặc thêm actor chỉ ảnh hưởng đến adapter.
 
 ### 2. Yêu cầu test automation và isolate test
  
