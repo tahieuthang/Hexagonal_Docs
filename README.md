@@ -72,9 +72,18 @@ Kết quả:
 - Adapter có thể thay thế dễ dàng.
 - Mở rộng tính năng bằng adapter mới thay vì sửa core.
 
-### 4. Ứng dụng có thể được điều khiển bởi bất kỳ “actor” nào
+### 4. Ứng dụng phải độc lập với nguồn kích hoạt (actor)
 
-Các actor: automated tests, batch scripts, hệ thống khác, UI khác. Tất cả đều thông qua ports/adapters.
+Lõi ứng dụng không được phụ thuộc vào cách nó được kích hoạt.
+
+Ứng dụng có thể được điều khiển bởi:
+- giao diện người dùng
+- kiểm thử tự động
+- batch job
+- hệ thống bên ngoài
+- API khác
+
+Tất cả tương tác với lõi phải đi qua inbound port.
 
 ### 5. Không ưu tiên một chiều phụ thuộc kiểu “tầng” (Layered)
 
@@ -84,9 +93,23 @@ Khác với mô hình phân tầng truyền thống (UI → Service → DB), Hex
 
 ## Các thành phần chính của Hexagonal Architecture
 
-1. Core Application (Bên trong ứng dụng): chứa domain logic, use cases và định nghĩa ports.
-2. Ports (Cổng kết nối): interface do Core định nghĩa; có inbound và outbound port.
-3. Adapters: triển khai cụ thể của ports để tích hợp với UI, DB, files, message queue, v.v.
+1. Core Application (Bên trong ứng dụng)
+- Chứa domain logic và use cases.
+- Core định nghĩa các ports và không phụ thuộc vào UI, database hay framework.
+- Mọi dependency đều phải hướng vào Core.
+  
+2. Ports (Cổng kết nối)
+- Là abstraction (thường ở dạng interface) do Core định nghĩa
+- Không chứa logic kỹ thuật hay chi tiết implementation
+- Không chứa logic kỹ thuật hay chi tiết implementation
+  • Inbound ports: được Core triển khai (implement) để nhận yêu cầu từ bên ngoài và thực thi logic nghiệp vụ.
+  • Outbound ports: được Core sử dụng để gọi ra bên ngoài (ví dụ: persistence, external service), nhưng implementation cụ thể nằm ở adapter.
+
+1. Adapters (Bộ chuyển đổi)
+- Là implementation của Port theo một công nghệ, thư viện hoặc hệ thống cụ thể (SQL, REST, Redis, AWS S3...).
+- Adapters không chứa business logic.
+- Adapters phụ thuộc vào port (abstraction) do Core định nghĩa
+- Chuyển đổi dữ liệu và protocol giữa môi trường bên ngoài sang ngôn ngữ của Core.
 
 ---
 
@@ -111,6 +134,8 @@ Dependency Direction (Rất quan trọng): mặc dù runtime flow là Outside �
 
 ### 5.1 Port — định nghĩa contract với hệ thống tập tin
 
+Port do core định nghĩa, không có code kỹ thuật. Port chỉ biết interface, không import fs, không biết ổ đĩa là gì
+
 Ví dụ (minh họa):
 
 ```ts
@@ -124,6 +149,8 @@ export interface FileStoragePort {
 Ghi chú: ví dụ này minh họa ý tưởng nhưng nên cân nhắc thiết kế port ở mức semantic (ví dụ DocumentPersistencePort) để tránh rò rỉ detail kỹ thuật vào core.
 
 ### 5.2 Core / Application Service (Use Case)
+
+FileService không biết dữ liệu được lưu ở đâu, dễ test, dễ thay thế adapter
 
 ```ts
 // application/FileService.ts
@@ -145,6 +172,8 @@ export class FileService {
 ```
 
 ### 5.3 Adapter — File System thật (Node.js)
+
+Adapter biết fs, path, chịu toàn bộ chi tiết kỹ thuật và có thể bị thay thế mà core không đổi
 
 ```ts
 // adapters/NodeFileSystemAdapter.ts
@@ -168,6 +197,8 @@ export class NodeFileSystemAdapter implements FileStoragePort {
 
 ### 5.4 Inbound Adapter — Controller (ví dụ CLI / API)
 
+Controller có nhiệm vụ nhận input, gọi use case và không chứa business logic
+
 ```ts
 // adapters/FileController.ts
 import { FileService } from '../application/FileService'
@@ -179,7 +210,6 @@ const fileService = new FileService(fileStorage)
 async function run() {
 	await fileService.saveNote('hexagonal', 'Ports and Adapters are awesome!')
 	const content = await fileService.readNote('hexagonal')
-	console.log(content)
 }
 run()
 ```
@@ -231,12 +261,39 @@ test('save and read note', async () => {
 
 ### Trường hợp ngoại lệ: Behavioral Non-Equivalence
 
-Một cạm bẫy: nếu port không định nghĩa semantic guarantees rõ ràng, các adapter khác nhau có thể có hành vi không tương đương (ví dụ: in-memory không survive restart). Điều này dẫn tới "architectural illusion": interface đúng nhưng behavior không đúng.
+Giả sử Business Logic đưa ra yêu cầu: 
+> *"Sau khi lưu file, hệ thống phải đảm bảo dữ liệu tồn tại vĩnh viễn (persist after restart)."*
 
-### Thiết kế port để tránh ngoại lệ
+Khi đó, hai Adapter khác nhau sẽ cho ra kết quả khác nhau:
+
+* **Adapter 1 (File System):**
+    * **Hành vi:** Ghi dữ liệu trực tiếp xuống ổ cứng.
+    * **Kết quả:** Dữ liệu tồn tại sau khi restart process $\rightarrow$ **ĐẠT** yêu cầu.
+* **Adapter 2 (RAM Adapter):**
+    * **Hành vi:** Lưu dữ liệu vào bộ nhớ đệm (In-memory).
+    * **Kết quả:** Dữ liệu bị xóa sạch ngay khi restart process $\rightarrow$ **VI PHẠM** tính bền vững.
+
+Nguyên nhân của vấn đề: Vấn đề nảy sinh khi Port chỉ được định nghĩa dựa trên các tham số kỹ thuật mà bỏ qua các ràng buộc về mặt nghiệp vụ.
+
+```ts
+interface FileStoragePort {
+  save(path: string, data: Buffer): void
+}
+```
+
+Port trên chỉ mô tả hành động kỹ thuật “save”, nhưng không mô tả:
+
+-	Tính bền vững (Persistence): Dữ liệu có tồn tại sau khi hệ thống restart không?
+-	Tính nhất quán (Consistency): Có đảm bảo dữ liệu được ghi thành công toàn bộ hay không?
+-	Độ tin cậy: Cơ chế xử lý khi ổ đĩa đầy hoặc lỗi bộ nhớ là gì?
+
+Khi constact không đúng về mặt ngữ nghĩa thì mọi adapter đều trông có vẻ hợp lệ nhưng không phải adapter nào cũng đúng về mặt business
+
+### Làm sao để tránh các ngoại lệ trong Hexagonal Architecture?
 
 - Thiết kế port ở cùng abstraction level với domain model (business capability), không mô tả infrastructure.
 - Port phải định nghĩa rõ semantic guarantees (durability, atomicity, failure model, types of errors, idempotency, v.v.).
+- Adapter phải bảo toàn Semantic Contract của Port, Các adapter implement cùng port thì đều phải tương đường về hành vi (behavioral equivalence), không chỉ tương đường về signature method.
 
 Ví dụ tốt (semantic port):
 
@@ -268,6 +325,7 @@ interface DocumentPersistencePort {
 - Khả năng testability cao: core test độc lập bằng mock/fake adapter.
 - Dễ thay đổi công nghệ bên ngoài mà không ảnh hưởng core.
 - Dễ bảo trì và mở rộng (nhiều adapter cho cùng port).
+- Hệ thống cho phép mọi Actor (UI, CLI, Test, Batch Jobs) dùng chung một Logic nghiệp vụ duy nhất thông qua các Port.
 - Phù hợp cho hệ thống lớn hoặc microservices.
 
 Ví dụ: đổi DB từ MySQL sang MongoDB chỉ cần thay adapter, không thay core.
@@ -276,8 +334,9 @@ Ví dụ: đổi DB từ MySQL sang MongoDB chỉ cần thay adapter, không tha
 
 - Độ phức tạp ban đầu cao: nhiều abstraction, interface.
 - Có thể là over-engineering cho ứng dụng nhỏ hoặc prototype.
-- Quản lý nhiều adapter tốn công.
+- Quản lý nhiều adapter có thể khá nặng, cần quản lý tốt.
 - Thay đổi port contract có thể khiến nhiều adapter phải cập nhật.
+- Nhiều abstraction khiến codebase rộng hơn (nhiều file/interface), có thể gây khó khăn khi trace lỗi
 
 Ví dụ: ứng dụng CRUD nhỏ có thể bị thừa abstraction và tăng chi phí phát triển.
 
@@ -285,16 +344,45 @@ Ví dụ: ứng dụng CRUD nhỏ có thể bị thừa abstraction và tăng ch
 
 ## III. Khi nào nên áp dụng Hexagonal Architecture
 
-1. Hệ thống có business phức tạp và thay đổi thường xuyên.
-2. Yêu cầu test automation và isolate test (không dùng DB thật trong unit tests).
-3. Có nhiều external interfaces / multiple actors (REST, CLI, message, batch…).
+1. Hệ thống có business phức tạp và thay đổi thường xuyên
+ 
+Khi hệ thống yêu cầu nhiều nghiệp vụ, nhiều use case, dễ biến động theo thời gian, lúc này Hexagonal giúp:
+
+-	Tách rõ ràng logic nghiệp vụ khỏi công nghệ
+-	Giúp core ổn định lâu dài
+-	Giảm rủi ro khi thay đổi yêu cầu nghiệp vụ
+
+Trong các hệ thống như tài chính, e-commerce hoặc các nền tảng có nhiều bước xử lý nghiệp vụ, logic thường phức tạp và dễ biến động. Nếu business logic bị trộn lẫn với framework, database hoặc API layer, mỗi thay đổi nhỏ có thể ảnh hưởng dây chuyền.
+
+2. Yêu cầu test automation và isolate test
+ 
+Hexagonal cho phép test core độc lập với Framework/UI/DB bằng mock/fake adapter
+
+- Test business logic không cần DB thật.
+- Không cần HTTP server để test các use case.
+
+3. Có nhiều external interfaces / multiple actors (REST, CLI, message, batch…)
+
+Một hệ thống cần phục vụ nhiều đường vào:
+
+-	REST API
+-	CLI tool
+-	Message consumer
+-	Batch jobs
+
+Hexagonal cho phép nhiều adapter cùng kết nối đến 1 inbound port, giúp nhiều actor sử dụng chung 1 business logic mà không làm thay đổi core.
+
 4. Cần thay đổi hoặc mở rộng công nghệ bên ngoài thường xuyên.
+
 5. Muốn di chuyển hoặc áp dụng Domain-Driven Design (DDD).
+
+- Nếu hệ thống có domain phức tạp, nhiều quy tắc nghiệp vụ, nhiều khái niệm cần mô hình hóa rõ ràng và có nhiều team cùng phát triển → Hexagonal giúp tạo nền tảng phù hợp để áp dụng DDD.
+- Trong những hệ thống mà business logic là trung tâm và cần được thiết kế cẩn thận (entity, value object, domain service, bounded context…), việc tách domain khỏi framework và hạ tầng là điều bắt buộc
 
 Không nên dùng khi:
 
 - Ứng dụng nhỏ, đơn giản, chỉ CRUD.
-- Prototype ngắn hạn, cần time-to-market nhanh.
+- Prototype ngắn hạn, cần time-to-market nhanh, không maintain lâu dài.
 - Team chưa sẵn sàng với mức độ abstraction cao.
 - Hệ thống cực kỳ nhạy cảm với latency/overhead của abstraction.
 
@@ -304,26 +392,128 @@ Không nên dùng khi:
 
 ### 1. Layered Architecture (N-Tier)
 
-- Tổ chức theo tầng: Presentation → Application → Domain → Infrastructure.
-- Phù hợp CRUD nhỏ, nhưng domain dễ bị phụ thuộc infra.
+Cấu trúc: Presentation → Application → Domain → infraconstructure
 
-So sánh: Layered tổ chức theo tầng; Hexagonal tổ chức theo boundary. Nếu CRUD đơn giản thì Layered đủ, nếu cần bảo vệ domain nghiêm ngặt thì Hexagonal tốt hơn.
+Điểm mạnh:
+
+-	Đơn giản, dễ hiểu, dễ triển khai
+-	Phù hợp CRUD, hệ thống nhỏ – trung bình
+-	Phổ biến trong enterprise
+
+Khi phù hợp:
+
+-	Hệ thống CRUD đơn giản
+-	Business logic không phức tạp
+-	Không yêu cầu tách biệt domain nghiêm ngặt
+-	Team quen với mô hình truyền thống
+
+Hạn chế:
+
+-	Dependency thường đi từ trên xuống dưới → Domain dễ phụ thuộc infraconstructure
+-	Khó test isolate nếu không kỷ luật thiết kế
+-	Business logic dễ bị rò rỉ sang layer khác
+
+So sánh: Layered tổ chức theo tầng, Domain có thể phụ thuộc infra; Hexagonal tổ chức theo boundary, Domain không phụ thuộc trực tiếp infraconstructure. Nếu CRUD đơn giản thì Layered đủ, nếu cần bảo vệ domain nghiêm ngặt thì Hexagonal tốt hơn.
 
 ### 2. Clean Architecture
 
-- Entities → Use Cases → Interface Adapters → Frameworks.
-- Giống Hexagonal ở chỗ dependency hướng vào trong. Clean Architecture chia layer chi tiết hơn.
+Cấu trúc: Entities → Use Cases → Interface Adapters → Frameworks
+
+Điểm mạnh:
+
+-	Dependency rule rõ ràng (dependency luôn hướng vào trong)
+-	Tách domain khỏi framework
+-	Rất phù hợp DDD
+
+Khi phù hợp:
+
+-	Domain phức tạp, nhiều use case
+-	Hệ thống lớn, nhiều team cùng phát triển
+-	Cần tách rõ application layer và domain layer
+
+Hạn chế:
+
+-	Tăng số layer → tăng độ phức tạp tổ chức code
+-	Có thể over-engineering với hệ thống nhỏ
+-	Đòi hỏi team hiểu rõ dependency rule
+
+So sánh với Hexagonal
+
+Giống nhau:
+
+•	Domain ở trung tâm
+•	infraconstructure ở ngoài
+•	Dependency hướng vào core
+
+Khác nhau:
+
+•	Clean chia layer chi tiết hơn (Entities, UseCases tách riêng)
+•	Hexagonal tập trung vào khái niệm Port & Adapter
+
+Nếu cần cấu trúc rất rõ cho hệ thống lớn → Clean Architecture chặt chẽ hơn.
+Nếu muốn mô hình đơn giản, dễ triển khai → Hexagonal đủ và rõ ràng.
 
 ### 3. Onion Architecture
 
-- Domain core ở trung tâm, infrastructure ở ngoài.
-- Rất giống triết lý với Hexagonal; khác biệt chính là cách nhấn mạnh (layer đồng tâm vs ports & adapters).
+Cấu trúc: Domain Core ở trung tâm → Application → infraconstructure ở ngoài
+
+Điểm mạnh:
+
+•	Nhấn mạnh domain purity
+•	Rõ dependency direction
+•	Phù hợp khi muốn domain độc lập framework
+
+Khi phù hợp:
+
+•	Hệ thống có domain rõ ràng
+•	Muốn bảo vệ domain khỏi framework
+•	Không cần mô hình port rõ ràng như Hexagonal
+
+Hạn chế:
+
+• Không mô tả explicit inbound/outbound port
+• Dễ bị triển khai giống layered nếu thiếu kỷ luật
+
+So sánh với Hexagonal
+
+Onion và Hexagonal gần như cùng triết lý:
+•	Domain là trung tâm
+•	infraconstructure là chi tiết
+•	Dependency hướng vào trong
+
+Khác biệt chính:
+•	Onion nhấn mạnh “layer đồng tâm”
+•	Hexagonal nhấn mạnh “Ports & Adapters”
 
 ### 4. Monolithic MVC
 
-- Controller → Service → Repository. Dễ tiếp cận, nhanh cho CRUD, nhưng domain thường phụ thuộc ORM và business logic có thể rò rỉ.
+Cấu trúc phổ biến: Controller → Service → Repository
 
-So sánh: MVC phù hợp hệ thống nhỏ; Hexagonal phù hợp domain phức tạp cần isolate business logic.
+Điểm mạnh:
+
+•	Rất dễ tiếp cận
+•	Framework hỗ trợ mạnh (Spring, Rails, Laravel…)
+•	Phù hợp CRUD nhanh
+•	Tốc độ phát triển cao
+
+Khi phù hợp:
+
+•	Ứng dụng CRUD
+•	Startup cần time-to-market nhanh
+•	Hệ thống không có domain phức tạp
+
+Hạn chế:
+
+•	Domain thường phụ thuộc ORM
+•	Business logic dễ nằm trong controller/service lẫn lộn
+•	Khó thay đổi hạ tầng lớn
+
+So sánh với Hexagonal:
+
+•	MVC tổ chức theo request flow 
+•	Hexagonal tổ chức theo boundary domain.
+•	MVC phù hợp hệ thống nhỏ
+•	Hexagonal phù hợp domain phức tạp và cần isolate business logic
 
 ---
 
