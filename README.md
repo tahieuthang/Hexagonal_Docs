@@ -300,8 +300,6 @@ Khi constact không đúng về mặt ngữ nghĩa thì mọi adapter đều tr�
 
 ### Làm sao để tránh các ngoại lệ trong Hexagonal Architecture?
 
-1. Thiết kế (Design)
-
 - Thiết kế port ở cùng abstraction level với domain model (business capability), không mô tả infrastructure.
 - Port phải định nghĩa rõ semantic guarantees (durability, atomicity, failure model, types of errors, idempotency, v.v.).
 - Adapter phải bảo toàn Semantic Contract của Port, các adapter implement cùng port thì đều phải tương đương về hành vi theo đúng semantic contract của port (behavioral equivalence), không chỉ tương đường về signature method.
@@ -321,19 +319,9 @@ interface DocumentPersistencePort {
 }
 ```
 
-2. Thực thi (Enforcement)
-
-Mục tiêu: đảm bảo các nguyên tắc thiết kế không bị phá vỡ trong quá trình triển khai.
-
-Cơ chế thực thi:
-
-- Ghi rõ semantic contract trong documentation.
-- Định nghĩa rõ exception types và failure model.
-- Xây dựng contract test suite dùng chung cho mỗi port; mọi adapter phải pass test này
-
 ---
 
-## II. Ưu điểm và nhược điểm
+## II. Ưu điểm và nhược điểm của Hexagonal Architecture 
 
 ### 1. Ưu điểm
 
