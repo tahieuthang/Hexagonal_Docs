@@ -100,19 +100,19 @@ Khác với mô hình phân tầng truyền thống (UI → Service → DB), Hex
 
 ## Các thành phần chính của Hexagonal Architecture
 
-1. Core Application (Bên trong ứng dụng)
+### 1. Core Application (Bên trong ứng dụng)
 - Chứa domain logic và use cases.
 - Core định nghĩa các ports và không phụ thuộc vào UI, database hay framework.
 - Mọi dependency đều phải hướng vào Core.
   
-2. Ports (Cổng kết nối)
+### 2. Ports (Cổng kết nối)
 - Là abstraction (thường ở dạng interface) do Core định nghĩa
 - Không chứa logic kỹ thuật hay chi tiết implementation
 - Không chứa logic kỹ thuật hay chi tiết implementation
   • Inbound ports: được Core triển khai (implement) để nhận yêu cầu từ bên ngoài và thực thi logic nghiệp vụ.
   • Outbound ports: được Core sử dụng để gọi ra bên ngoài (ví dụ: persistence, external service), nhưng implementation cụ thể nằm ở adapter.
 
-1. Adapters (Bộ chuyển đổi)
+### 3. Adapters (Bộ chuyển đổi)
 - Là implementation của Port theo một công nghệ, thư viện hoặc hệ thống cụ thể (SQL, REST, Redis, AWS S3...).
 - Adapters không chứa business logic.
 - Adapters phụ thuộc vào port (abstraction) do Core định nghĩa
