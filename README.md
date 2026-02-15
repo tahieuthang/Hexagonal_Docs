@@ -11,28 +11,31 @@ Tài liệu này là một bản nghiên cứu về Hexagonal Architecture (Port
 
 ## Mục lục
 
-- [Giới thiệu](#gi%E1%BB%9Bi-thi%E1%BB%87u)
-- [I. Nguyên tắc cốt lõi](#i-nguy%E1%BB%85n-t%E1%BA%A7c-c%E1%BB%91t-l%C3%A2n)
-	- [Hexagonal Architecture là gì?](#hexagonal-architecture-l%C3%A0-g%C3%AC)
-	- [Tách biệt lõi nghiệp vụ và công nghệ bên ngoài](#t%C3%A1ch-bi%E1%BB%87t-l%C3%B3i-nghi%E1%BB%87p-v%E1%BB%A5-v%C3%A0-c%C3%B4ng-ngh%E1%BB%87-b%C3%AAn-ngo%C3%A0i)
-	- [Ports (Cổng kết nối)](#ports-c%E1%BB%93ng-k%E1%BA%BFt-n%E1%BB%91i)
-	- [Adapters (Bộ chuyển đổi)](#adapters-b%E1%BB%98-chuy%E1%BB%83n-%C4%91%E1%BB%95i)
-	- [Ứng dụng có thể được điều khiển bởi bất kỳ actor nào](#%C3%BAng-d%E1%BB%A5ng-c%C3%B3-th%E1%BB%83-%C4%91i%E1%BB%81u-khi%E1%BB%83n-b%E1%BA%A5t-k%E1%BB%B3-actor-n%C3%A0o)
-	- [Không ưu tiên chiều phụ thuộc kiểu "tầng"](#kh%C3%B4ng-%C6%B0u-ti%C3%AAn-chi%E1%BB%81u-ph%E1%BB%A5-thu%E1%BB%91c-k%E1%BB%B9-t%E1%BA%BFng)
-- [II. Ưu điểm và nhược điểm](#ii-%C6%B0u-%C4%91i%E1%BB%83m-v%C3%A0-nh%C6%B0%E1%BB%A3c-%C4%91i%E1%BB%83m)
-- [III. Khi nào nên áp dụng](#iii-khi-n%C3%A0o-n%C3%AAn-%C3%A1p-d%E1%BB%A5ng)
-- [IV. So sánh với các kiến trúc khác](#iv-so-s%C3%A1nh-v%E1%BB%9Bi-c%C3%A1c-ki%E1%BA%BFn-tr%C3%BAc-kh%C3%A1c)
-- [V. Kết luận](#v-k%E1%BA%BFt-lu%E1%BA%ADn)
-- [Tài liệu tham khảo / Ghi chú](#t%C3%A0i-li%E1%BB%87u-tham-kh%E1%BB%A3)
+- [Giới thiệu](#gioi-thieu)
+- [I. Nguyên tắc cốt lõi](#i-nguyen-tac-cot-loi)
+  - [Hexagonal Architecture là gì?](#hexagonal-architecture-la-gi)
+  - [Tách biệt lõi nghiệp vụ và công nghệ bên ngoài](#tach-biet-loi-nghiep-vu)
+  - [Ports (Cổng kết nối)](#ports)
+  - [Adapters (Bộ chuyển đổi)](#adapters)
+  - [Ứng dụng có thể được điều khiển bởi bất kỳ actor nào](#ung-dung-actor)
+  - [Không ưu tiên chiều phụ thuộc kiểu "tầng"](#khong-uu-tien-tang)
+- [II. Ưu điểm và nhược điểm](#ii-uu-diem-nhuoc-diem)
+- [III. Khi nào nên áp dụng](#iii-khi-nao)
+- [IV. So sánh với các kiến trúc khác](#iv-so-sanh)
+- [V. Kết luận](#v-ket-luan)
+- [Tài liệu tham khảo / Ghi chú](#tai-lieu-tham-khao)
 
+<a id="gioi-thieu"></a>
 ## Giới thiệu
 
 Hexagonal Architecture (Ports & Adapters) là một mẫu kiến trúc giúp tách lõi nghiệp vụ (business/application core) khỏi chi tiết công nghệ bên ngoài (UI, DB, framework, network, v.v.). Mục tiêu là làm cho core ổn định, dễ kiểm thử và dễ thay đổi công nghệ bên ngoài mà không ảnh hưởng đến business logic.
 
 ---
 
+<a id="i-nguyen-tac-cot-loi"></a>
 ## I. Nguyên tắc cốt lõi
 
+<a id="hexagonal-architecture-la-gi"></a>
 ### Hexagonal Architecture là gì?
 
 Hexagonal Architecture (Ports & Adapters) là mẫu thiết kế nhằm tổ chức hệ thống sao cho logic nghiệp vụ đứng độc lập hoàn toàn với công nghệ bên ngoài. Điểm cốt lõi:
@@ -41,6 +44,7 @@ Hexagonal Architecture (Ports & Adapters) là mẫu thiết kế nhằm tổ ch�
 - Tương tác giữa lõi và bên ngoài chỉ qua các giao diện trừu tượng (ports).
 - Mỗi port có thể có nhiều adapter theo công nghệ khác nhau.
 
+<a id="tach-biet-loi-nghiep-vu"></a>
 ### 1. Tách biệt lõi nghiệp vụ và công nghệ bên ngoài
 
 Core phải tồn tại hoàn toàn độc lập với UI, database, network, framework hoặc bất kỳ chi tiết kỹ thuật nào.
@@ -59,12 +63,14 @@ Lợi ích:
 
 Hexagonal Architecture không chỉ tách UI/DB ra khỏi business logic, mà còn đảo chiều phụ thuộc để bảo vệ Core như trung tâm ổn định của hệ thống.
 
+<a id="ports"></a>
 ### 2. Mọi tương tác với lõi đều qua "Ports"
 
 - Port là Architectural Boundary giữa Inside (Core) và Outside (UI, DB, Framework, …).
 - Port không chỉ định nghĩa method signature, mà còn định nghĩa semantic contract (ai gọi ai, ai chịu trách nhiệm, guarantees …).
 - Port thuộc về Core; adapters phụ thuộc vào port và triển khai port.
 
+<a id="adapters"></a>
 ### 3. "Adapters" là các triển khai cụ thể của các port
 
 Adapter là lớp kết nối thực tế giữa port và thế giới bên ngoài.
@@ -79,6 +85,7 @@ Kết quả:
 - Adapter có thể thay thế dễ dàng.
 - Mở rộng tính năng bằng adapter mới thay vì sửa core.
 
+<a id="ung-dung-actor"></a>
 ### 4. Ứng dụng phải độc lập với nguồn kích hoạt (actor)
 
 Lõi ứng dụng không được phụ thuộc vào cách nó được kích hoạt.
@@ -92,6 +99,7 @@ Lõi ứng dụng không được phụ thuộc vào cách nó được kích ho
 
 Tất cả tương tác với lõi phải đi qua inbound port.
 
+<a id="khong-uu-tien-tang"></a>
 ### 5. Không ưu tiên một chiều phụ thuộc kiểu “tầng” (Layered)
 
 Khác với mô hình phân tầng truyền thống (UI → Service → DB), Hexagonal tổ chức theo boundary Inside ↔ Outside. Layer vẫn có thể tồn tại bên trong Core hoặc Adapter nhưng không phải trục kiến trúc chính.
@@ -240,6 +248,7 @@ export async function run(documentService: DocumentService) {
 
 ---
 
+<a id="kiem-chung"></a>
 ## Kiểm chứng Hexagonal Architecture
 
 Hexagonal cho phép test core mà không cần file system thật bằng cách dùng adapters in-memory hoặc mock. Tạo 1 adapter hợp lệ khác giúp ta test mà không cần disk, chạy cực nhanh bằng cách lưu file vào RAM
@@ -405,6 +414,7 @@ documentPersistenceContractTest(() => new FileSystemAdapter())
 
 ---
 
+<a id="ii-uu-diem-nhuoc-diem"></a>
 ## II. Ưu điểm và nhược điểm của Hexagonal Architecture 
 
 ### 1. Ưu điểm
@@ -430,6 +440,7 @@ Ví dụ: ứng dụng CRUD nhỏ có thể bị thừa abstraction và tăng ch
 
 ---
 
+<a id="iii-khi-nao"></a>
 ## III. Khi nào nên áp dụng Hexagonal Architecture
 
 ### 1. Hệ thống có business phức tạp và thay đổi thường xuyên
@@ -490,6 +501,7 @@ Không nên dùng khi:
 
 ---
 
+<a id="iv-so-sanh"></a>
 ## IV. So sánh Hexagonal Architecture với các mẫu kiến trúc khác
 
 ### 1. Layered Architecture (N-Tier)
@@ -525,10 +537,12 @@ Không nên dùng khi:
 
 ---
 
+<a id="v-ket-luan"></a>
 ## V. Kết luận
 
 Hexagonal Architecture không phải là kiến trúc duy nhất hoặc "tốt nhất" cho mọi tình huống. Đây là lựa chọn phù hợp khi hệ thống có domain phức tạp, cần bảo vệ business logic khỏi hạ tầng, cần test isolate và phải phục vụ nhiều actor hoặc thay đổi công nghệ thường xuyên. Lựa chọn kiến trúc nên dựa trên độ phức tạp domain, khả năng thay đổi công nghệ và năng lực đội ngũ.
 
+<a id="tai-lieu-tham-khao"></a>
 ## Tài liệu tham khảo / Ghi chú
 
 - Thuật ngữ: Hexagonal Architecture ≡ Ports & Adapters.
