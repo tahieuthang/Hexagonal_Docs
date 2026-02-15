@@ -26,7 +26,6 @@ Tài liệu này là một bản nghiên cứu về Hexagonal Architecture (Port
 - [III. Khi nào nên áp dụng](#iii-khi-nao)
 - [IV. So sánh với các mẫu kiến trúc khác](#iv-so-sanh)
 - [V. Kết luận](#v-ket-luan)
-- [Tài liệu tham khảo / Ghi chú](#tai-lieu-tham-khao)
 
 ---
 
@@ -109,8 +108,6 @@ Dependency Direction (Rất quan trọng): mặc dù runtime flow là Outside �
 ### 5.1 Port — định nghĩa contract với hệ thống tập tin
 
 Port do core định nghĩa, không có code kỹ thuật. Port chỉ biết interface, không import fs, không biết ổ đĩa là gì
-
-Ví dụ (minh họa):
 
 ```ts
 // ports/DocumentPersistencePort.ts
@@ -282,6 +279,8 @@ Khi constract không đúng về mặt ngữ nghĩa thì mọi adapter đều tr
 
 Ví dụ Semantic Port:
 
+Port không chỉ định nghĩa method signature, mà định nghĩa đầy đủ semantic contract.
+
 ```ts
 interface DocumentPersistencePort {
 
@@ -310,8 +309,6 @@ interface DocumentPersistencePort {
   get(title: string): Promise<Document>
 }
 ```
-
-Port không chỉ định nghĩa method signature, mà định nghĩa đầy đủ semantic contract.
 
 Shared Contract Test Suite
 
