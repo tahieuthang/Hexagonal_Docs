@@ -327,21 +327,81 @@ Khi constact không đúng về mặt ngữ nghĩa thì mọi adapter đều tr�
 - Thiết kế port ở cùng abstraction level với domain model (business capability), không mô tả infrastructure.
 - Port phải định nghĩa rõ semantic guarantees (durability, atomicity, failure model, types of errors, idempotency, v.v.).
 - Adapter phải bảo toàn Semantic Contract của Port, các adapter implement cùng port thì đều phải tương đương về hành vi theo đúng semantic contract của port (behavioral equivalence), không chỉ tương đường về signature method.
+- Behavioral equivalence phải được xác thực bằng Shared Contract Test Suite do core sở hữu, không để từng adapter tự định nghĩa đúng/sai.
 
 Ví dụ tốt (semantic port):
 
 ```ts
 interface DocumentPersistencePort {
-	/**
-	 * Persists document durably.
-	 * Must survive process restart.  
-	 * Must be atomic.
-	 * Must not partially commit.
-	 */
-	save(document: Document): Promise<void>
-	get(id: DocumentId): Promise<Document>
+
+  /**
+   * Persists document durably.
+   *
+   * Guarantees:
+   * - Must survive process restart.
+   * - Must be atomic.
+   * - Must not partially commit.
+   * - Idempotent if called multiple times with same document id.
+   *
+   * Failure model:
+   * - Throws DocumentAlreadyExistsError if duplicate.
+   * - Throws PersistenceUnavailableError if storage is unreachable.
+   */
+  save(document: Document): Promise<void>
+
+  /**
+   * Retrieves a document by title.
+   *
+   * Guarantees:
+   * - Returns consistent data previously committed.
+   *
+   * Failure model:
+   * - Throws DocumentNotFoundError if not exists.
+   * - Throws PersistenceUnavailableError if storage is unreachable.
+   */
+  get(title: string): Promise<Document>
 }
 ```
+
+Ở đây Port không chỉ định nghĩa method signature, mà định nghĩa semantic contract đầy đủ: durability, atomicity, error model, idempotency.
+
+Ví dụ Shared Contract Test Suite (Enforcing Behavioral Equivalence)
+
+```ts
+export function documentPersistenceContractTest(
+  createAdapter: () => DocumentPersistencePort
+) {
+  describe('DocumentPersistencePort contract', () => {
+
+    it('must persist durably', async () => {
+      const adapter = createAdapter()
+
+      const doc = new Document('a', 'content')
+      await adapter.save(doc)
+
+      const loaded = await adapter.get(doc.id)
+
+      expect(loaded.content).toEqual('content')
+    })
+
+    it('must not partially commit on failure', async () => {
+      // simulate failure if possible
+      // verify no corrupted state
+    })
+  })
+}
+```
+
+Sau đó mỗi adapter reuse:
+
+```ts
+documentPersistenceContractTest(() => new PostgresAdapter())
+documentPersistenceContractTest(() => new FileSystemAdapter())
+```
+
+→ Nếu một adapter fail test
+→ Adapter đó không compliant với semantic contract của Port
+→ Vi phạm behavioral equivalence
 
 ---
 
