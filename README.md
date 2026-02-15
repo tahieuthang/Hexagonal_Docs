@@ -146,35 +146,45 @@ Port do core định nghĩa, không có code kỹ thuật. Port chỉ biết int
 Ví dụ (minh họa):
 
 ```ts
-// ports/FileStoragePort.ts
-export interface FileStoragePort {
-	write(path: string, content: string): Promise<void>
-	read(path: string): Promise<string>
+// ports/DocumentPersistencePort.ts
+interface DocumentPersistencePort {
+	write(document: Document): Promise<void>
+	read(title: string): Promise<Document>
 }
 ```
 
-Ghi chú: ví dụ này minh họa ý tưởng nhưng nên cân nhắc thiết kế port ở mức semantic (ví dụ DocumentPersistencePort) để tránh rò rỉ detail kỹ thuật vào core.
-
 ### 5.2 Core / Application Service (Use Case)
 
-FileService không biết dữ liệu được lưu ở đâu, dễ test, dễ thay thế adapter
+DocumentService không biết dữ liệu được lưu ở đâu, dễ test, dễ thay thế adapter
 
 ```ts
-// application/FileService.ts
-import { FileStoragePort } from '../ports/FileStoragePort'
+// domain/Document.ts
+export class Document {
+  constructor(
+    public readonly title: string,
+    public readonly content: string
+  ) {}
+}
+```
 
-export class FileService {
-	constructor(private fileStorage: FileStoragePort) {}
+```ts
+// application/DocumentService.ts
+import { DocumentPersistencePort } from '../ports/DocumentPersistencePort'
+import { Document } from '../domain/Document'
 
-	async saveNote(title: string, content: string) {
-		const path = `notes/${title}.txt`
-		await this.fileStorage.write(path, content)
-	}
+export class DocumentService {
+  constructor(private readonly persistence: DocumentPersistencePort) {}
 
-	async readNote(title: string): Promise<string> {
-		const path = `notes/${title}.txt`
-		return this.fileStorage.read(path)
-	}
+  async saveNote(title: string, content: string): Promise<void> {
+    await this.persistence.write(
+      new Document(title, content)
+    )
+  }
+
+  async readNote(title: string): Promise<string> {
+    const document = await this.persistence.read(title)
+    return document.content
+  }
 }
 ```
 
@@ -186,19 +196,30 @@ Adapter biết fs, path, chịu toàn bộ chi tiết kỹ thuật và có thể
 // adapters/NodeFileSystemAdapter.ts
 import { promises as fs } from 'fs'
 import path from 'path'
-import { FileStoragePort } from '../ports/FileStoragePort'
+import { DocumentPersistencePort } from '../ports/DocumentPersistencePort'
+import { Document } from '../domain/Document'
 
-export class NodeFileSystemAdapter implements FileStoragePort {
-	async write(filePath: string, content: string): Promise<void> {
-		const fullPath = path.resolve(filePath)
-		await fs.mkdir(path.dirname(fullPath), { recursive: true })
-		await fs.writeFile(fullPath, content, 'utf-8')
-	}
+export class NodeFileSystemAdapter implements DocumentPersistencePort {
 
-	async read(filePath: string): Promise<string> {
-		const fullPath = path.resolve(filePath)
-		return fs.readFile(fullPath, 'utf-8')
-	}
+  private baseDir = 'notes'
+
+  async write(document: Document): Promise<void> {
+    const fullPath = this.resolvePath(document.title)
+
+    await fs.mkdir(path.dirname(fullPath), { recursive: true })
+    await fs.writeFile(fullPath, document.content, 'utf-8')
+  }
+
+  async read(title: string): Promise<Document> {
+    const fullPath = this.resolvePath(title)
+    const content = await fs.readFile(fullPath, 'utf-8')
+
+    return new Document(title, content)
+  }
+
+  private resolvePath(title: string): string {
+    return path.resolve(`${this.baseDir}/${title}.txt`)
+  }
 }
 ```
 
@@ -208,17 +229,13 @@ Controller có nhiệm vụ nhận input, gọi use case và không chứa busin
 
 ```ts
 // adapters/FileController.ts
-import { FileService } from '../application/FileService'
-import { NodeFileSystemAdapter } from './NodeFileSystemAdapter'
+import { DocumentService } from '../application/DocumentService'
 
-const fileStorage = new NodeFileSystemAdapter()
-const fileService = new FileService(fileStorage)
-
-async function run() {
-	await fileService.saveNote('hexagonal', 'Ports and Adapters are awesome!')
-	const content = await fileService.readNote('hexagonal')
+export async function run(documentService: DocumentService) {
+  await documentService.saveNote('hexagonal', 'Ports and Adapters are awesome!')
+  const content = await documentService.readNote('hexagonal')
+  console.log(content)
 }
-run()
 ```
 
 ---
@@ -230,21 +247,26 @@ Hexagonal cho phép test core mà không cần file system thật bằng cách d
 Ví dụ adapter in-memory để test:
 
 ```ts
-// adapters/InMemoryFileStorageAdapter.ts
-import { FileStoragePort } from '../ports/FileStoragePort'
+// adapters/InMemoryDocumentPersistenceAdapter.ts
+import { DocumentPersistencePort } from '../ports/DocumentPersistencePort'
+import { Document } from '../domain/Document'
 
-export class InMemoryFileStorageAdapter implements FileStoragePort {
-	private storage = new Map<string, string>()
+export class InMemoryDocumentPersistenceAdapter
+  implements DocumentPersistencePort {
 
-	async write(path: string, content: string): Promise<void> {
-		this.storage.set(path, content)
-	}
+  private storage = new Map<string, Document>()
 
-	async read(path: string): Promise<string> {
-		const content = this.storage.get(path)
-		if (!content) throw new Error('File not found')
-		return content
-	}
+  async write(document: Document): Promise<void> {
+    this.storage.set(document.title, document)
+  }
+
+  async read(title: string): Promise<Document> {
+    const document = this.storage.get(title)
+    if (!document) {
+      throw new Error('Document not found')
+    }
+    return document
+  }
 }
 ```
 
@@ -253,18 +275,20 @@ Test core mà không dùng file system: giúp ta test core không phụ thuộc 
 Ví dụ test đơn giản:
 
 ```ts
-// tests/FileService.test.ts
-import { FileService } from '../application/FileService'
-import { InMemoryFileStorageAdapter } from '../adapters/InMemoryFileStorageAdapter'
+import { DocumentService } from '../application/DocumentService'
+import { InMemoryDocumentPersistenceAdapter } from '../adapters/InMemoryDocumentPersistenceAdapter'
 
-test('save and read note', async () => {
-	const storage = new InMemoryFileStorageAdapter()
-	const service = new FileService(storage)
+test('DocumentService', () => {
+  it('should save and read note', async () => {
+    const storage = new InMemoryDocumentPersistenceAdapter()
+    const service = new DocumentService(storage)
 
-	await service.saveNote('test', 'Hello Hexagonal')
-	const content = await service.readNote('test')
+    await service.saveNote('hexagonal', 'awesome')
 
-	expect(content).toBe('Hello Hexagonal')
+    const content = await service.readNote('hexagonal')
+
+    expect(content).toBe('awesome')
+  })
 })
 ```
 
@@ -310,7 +334,7 @@ Ví dụ tốt (semantic port):
 interface DocumentPersistencePort {
 	/**
 	 * Persists document durably.
-	 * Must survive process restart.
+	 * Must survive process restart.  
 	 * Must be atomic.
 	 * Must not partially commit.
 	 */
