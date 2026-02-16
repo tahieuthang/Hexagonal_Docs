@@ -1,7 +1,8 @@
-# Nghiên cứu Hexagonal Architecture (Ports & Adapters)
+# Nghiên cứu Hexagonal Architecture
 
 Tài liệu này là một bản nghiên cứu về Hexagonal Architecture (Ports & Adapters). Nội dung được chia thành các phần: nguyên tắc cốt lõi, các thành phần, cách hoạt động, ví dụ minh họa, kiểm chứng/contract, ưu/nhược điểm, khi nào nên áp dụng, so sánh với các mẫu kiến trúc khác và kết luận.
 
+<a id="bang-chung-quy-trinh"></a>
 ## Bằng chứng quy trình & cách xác thực (Research → Summary → Example → Confirmation)
 
 - Research: xem "Giới thiệu" và "I. Nguyên tắc cốt lõi" — thu thập khái niệm, nguyên tắc và semantic của Ports/Adapters.
@@ -10,35 +11,38 @@ Tài liệu này là một bản nghiên cứu về Hexagonal Architecture (Port
 - Confirmation: xem "Kiểm chứng Hexagonal Architecture" và "Enforcing Behavioral Equivalence" — bao gồm ví dụ test và đề xuất shared contract test suite để kiểm tra tính compliant của các adapter.
 
 
+
 ## Mục lục
 
-- [Giới thiệu](#gioi-thieu)
-- [I. Nguyên tắc cốt lõi](#i-nguyen-tac-cot-loi)
-  - [Hexagonal Architecture là gì?](#hexagonal-architecture-la-gi)
-  - [Các nguyên tắc cốt lõi](#tach-biet-loi-nghiep-vu)
-  - [Các thành phần chính](#cac-thanh-phan-chinh)
-  - [Cách thức hoạt động](#cach-thuc-hoat-dong)
-- [3. Các thành phần chính](#cac-thanh-phan-chinh)
-- [4. Cách thức hoạt động](#cach-thuc-hoat-dong)
-- [Ví dụ thực tế: File system (Document persistence)](#vi-du-thuc-te)
-- [Kiểm chứng Hexagonal Architecture](#kiem-chung)
-- [II. Ưu điểm và nhược điểm](#ii-uu-diem-nhuoc-diem)
-- [III. Khi nào nên áp dụng](#iii-khi-nao)
-- [IV. So sánh với các mẫu kiến trúc khác](#iv-so-sanh)
-- [V. Kết luận](#v-ket-luan)
+- [Bằng chứng quy trình & cách xác thực](#bang-chung-quy-trinh)
+- [I. Nguyên tắc cốt lõi của Hexagonal Architecture](#i-nguyen-tac-cot-loi)
+  - [1.1 Hexagonal Architecture là gì?](#hexagonal-architecture-la-gi)
+  - [1.2 Các nguyên tắc cốt lõi](#tach-biet-loi-nghiep-vu)
+  - [1.3 Các thành phần chính](#cac-thanh-phan-chinh)
+  - [1.4 Cách thức hoạt động](#cach-thuc-hoat-dong)
+- [II. Minh họa và kiểm chứng Hexagonal Architecture](#ii-minh-hoa)
+  - [2.1 Ví dụ thực tế: thao tác hệ thống tập tin (File System)](#vi-du-thuc-te)
+  - [2.2 Kiểm chứng Hexagonal Architecture](#kiem-chung)
+- [III. Trường hợp ngoại lệ và cách tránh](#iii-truong-hop)
+  - [3.1 Trường hợp ngoại lệ: Behavioral Non-Equivalence](#truong-hop-ngoai-le)
+  - [3.2 Làm sao để tránh các ngoại lệ](#lam-sao-de-tranh)
+- [IV. Ưu điểm và nhược điểm](#iv-uu-diem-nhuoc-diem)
+- [V. Khi nào nên áp dụng](#v-khi-nao)
+- [VI. So sánh với các mẫu kiến trúc khác](#vi-so-sanh)
+- [VII. Kết luận](#vii-ket-luan)
 
 ---
 
 <a id="i-nguyen-tac-cot-loi"></a>
-## I. Nguyên tắc cốt lõi
+## I. Nguyên tắc cốt lõi của Hexagonal Architecture
 
 <a id="hexagonal-architecture-la-gi"></a>
-### 1. Hexagonal Architecture là gì?
+### 1.1. Hexagonal Architecture là gì?
 
 Hexagonal Architecture (Ports & Adapters) là một mẫu kiến trúc giúp tách lõi nghiệp vụ (business/application core) khỏi chi tiết công nghệ bên ngoài (UI, DB, framework, network, v.v.). Mục tiêu là làm cho core ổn định, dễ kiểm thử và dễ thay đổi công nghệ bên ngoài mà không ảnh hưởng đến business logic.
 
 <a id="tach-biet-loi-nghiep-vu"></a>
-### 2. Các nguyên tắc cốt lõi
+### 1.2. Các nguyên tắc cốt lõi
 
 ### Tách biệt lõi nghiệp vụ và công nghệ bên ngoài
 
@@ -59,9 +63,8 @@ Hexagonal Architecture (Ports & Adapters) là một mẫu kiến trúc giúp tá
 ---
 
 <a id="cac-thanh-phan-chinh"></a>
-## 3. Các thành phần chính
+## 1.3. Các thành phần chính
 
-<a id="core-application"></a>
 ### Core Application (Bên trong ứng dụng)
 
 - Chứa domain logic và use cases.
@@ -86,7 +89,7 @@ Hexagonal Architecture (Ports & Adapters) là một mẫu kiến trúc giúp tá
 ---
 
 <a id="cach-thuc-hoat-dong"></a>
-## 4. Cách thức hoạt động
+## 1.4. Cách thức hoạt động
 
 Quy trình điển hình khi có sự kiện bên ngoài gọi vào:
 
@@ -101,11 +104,15 @@ Dependency Direction (Rất quan trọng): mặc dù runtime flow là Outside �
 
 ---
 
-## Ví dụ thực tế: thao tác hệ thống tập tin (File System)
+<a id="ii-minh-hoa"></a>
+## II. Minh họa và kiểm chứng Hexagonal Architecture
+
+<a id="vi-du-thuc-te"></a>
+## 2.1. Ví dụ thực tế: thao tác hệ thống tập tin (File System)
 
 Ứng dụng: Lưu và đọc nội dung note.
 
-### 5.1 Port — định nghĩa contract với hệ thống tập tin
+### Port — định nghĩa contract với hệ thống tập tin
 
 Port do core định nghĩa, không có code kỹ thuật. Port chỉ biết interface, không import fs, không biết ổ đĩa là gì
 
@@ -117,7 +124,7 @@ interface DocumentPersistencePort {
 }
 ```
 
-### 5.2 Core / Application Service (Use Case)
+### Core / Application Service (Use Case)
 
 DocumentService không biết dữ liệu được lưu ở đâu, dễ test, dễ thay thế adapter
 
@@ -152,7 +159,7 @@ export class DocumentService {
 }
 ```
 
-### 5.3 Adapter — File System thật (Node.js)
+### Adapter — File System thật (Node.js)
 
 Adapter biết fs, path, chịu toàn bộ chi tiết kỹ thuật và có thể bị thay thế mà core không đổi
 
@@ -175,7 +182,7 @@ export class NodeFileSystemAdapter implements DocumentPersistencePort {
 }
 ```
 
-### 5.4 Inbound Adapter — Controller (ví dụ CLI / API)
+### Inbound Adapter — Controller (ví dụ CLI / API)
 
 Controller có nhiệm vụ nhận input, gọi use case và không chứa business logic
 
@@ -193,7 +200,7 @@ export async function run(documentService: DocumentService) {
 ---
 
 <a id="kiem-chung"></a>
-## Kiểm chứng Hexagonal Architecture
+## 2.2. Kiểm chứng Hexagonal Architecture
 
 Hexagonal cho phép test Core mà không cần file system thật bằng cách dùng adapter in-memory. Nhờ đó test:
 
@@ -240,7 +247,11 @@ test('DocumentService should save and read note', async () => {
 });
 ```
 
-### Trường hợp ngoại lệ: Behavioral Non-Equivalence
+<a id="iii-truong-hop"></a>
+## III. Trường hợp ngoại lệ và cách tránh
+
+<a id="truong-hop-ngoai-le"></a>
+### 3.1. Trường hợp ngoại lệ: Behavioral Non-Equivalence
 
 Giả sử Business Logic đưa ra yêu cầu: 
 > *"Sau khi lưu file, hệ thống phải đảm bảo dữ liệu tồn tại vĩnh viễn (persist after restart)."*
@@ -270,7 +281,9 @@ Port trên chỉ mô tả hành động kỹ thuật “save”, nhưng không m
 
 Khi constract không đúng về mặt ngữ nghĩa thì mọi adapter đều trông có vẻ hợp lệ nhưng không phải adapter nào cũng đúng về mặt business
 
-### Làm sao để tránh các ngoại lệ trong Hexagonal Architecture?
+
+<a id="lam-sao-de-tranh"></a>
+### 3.2. Làm sao để tránh các ngoại lệ trong Hexagonal Architecture?
 
 - Thiết kế port ở cùng abstraction level với domain model (business capability)
 - Port phải định nghĩa rõ semantic guarantees (durability, atomicity, failure model, types of errors, idempotency, v.v.)
@@ -345,10 +358,10 @@ documentPersistenceContractTest(() => new FileSystemAdapter())
 
 ---
 
-<a id="ii-uu-diem-nhuoc-diem"></a>
-## II. Ưu điểm và nhược điểm của Hexagonal Architecture 
+<a id="iv-uu-diem-nhuoc-diem"></a>
+## IV. Ưu điểm và nhược điểm của Hexagonal Architecture 
 
-### 1. Ưu điểm
+### Ưu điểm
 
 - Tách biệt rõ business và infrastructure.
 - Khả năng testability cao: core test độc lập bằng mock/fake adapter.
@@ -358,7 +371,7 @@ documentPersistenceContractTest(() => new FileSystemAdapter())
 
 Ví dụ: đổi DB từ MySQL sang MongoDB chỉ cần thay adapter, không thay core.
 
-### 2. Nhược điểm
+### Nhược điểm
 
 - Độ phức tạp ban đầu cao: nhiều abstraction, interface.
 - Có thể là over-engineering cho ứng dụng nhỏ hoặc prototype.
@@ -367,10 +380,10 @@ Ví dụ: đổi DB từ MySQL sang MongoDB chỉ cần thay adapter, không tha
 
 ---
 
-<a id="iii-khi-nao"></a>
-## III. Khi nào nên áp dụng Hexagonal Architecture
+<a id="v-khi-nao"></a>
+## V. Khi nào nên áp dụng Hexagonal Architecture
 
-### 1. Hệ thống có business phức tạp và thay đổi thường xuyên
+### Hệ thống có business phức tạp và thay đổi thường xuyên
 
 Ví dụ kịch bản thực tế: Hệ thống thanh toán
 
@@ -388,15 +401,15 @@ Nếu business logic nằm trong controller/repository, mỗi thay đổi sẽ l
 
 Với Hexagonal, core được cô lập và ổn định. Việc thay đổi công nghệ hoặc thêm actor chỉ ảnh hưởng đến adapter.
 
-### 2. Yêu cầu test automation và isolate test
-### 3. Có nhiều external interfaces / multiple actors (REST, CLI, message, batch…)
-### 4. Cần thay đổi hoặc mở rộng công nghệ bên ngoài thường xuyên.
-### 5. Muốn di chuyển hoặc áp dụng Domain-Driven Design (DDD).
+### Yêu cầu test automation và isolate test
+### Có nhiều external interfaces / multiple actors (REST, CLI, message, batch…)
+### Cần thay đổi hoặc mở rộng công nghệ bên ngoài thường xuyên.
+### Muốn di chuyển hoặc áp dụng Domain-Driven Design (DDD).
 
 - DDD là cách thiết kế tập trung vào domain model (entity, value object, domain service, bounded context).
 - Khi business logic là trung tâm và cần được mô hình hóa rõ ràng, việc tách domain khỏi framework và hạ tầng là bắt buộc.
 
-Không nên dùng khi:
+### Khi nào không nên áp dụng Hexagonal Architecture:
 
 - Ứng dụng nhỏ, đơn giản, chỉ CRUD.
 - Prototype ngắn hạn, cần time-to-market nhanh, không maintain lâu dài.
@@ -405,8 +418,8 @@ Không nên dùng khi:
 
 ---
 
-<a id="iv-so-sanh"></a>
-## IV. So sánh Hexagonal Architecture với các mẫu kiến trúc khác
+<a id="vi-so-sanh"></a>
+## VI. So sánh Hexagonal Architecture với các mẫu kiến trúc khác
 
 | Kiến trúc   | Đặc điểm chính                                   | Domain có phụ thuộc infra? | Phù hợp                         |
 |------------|--------------------------------------------------|----------------------------|----------------------------------|
@@ -418,7 +431,7 @@ Không nên dùng khi:
 
 ---
 
-<a id="v-ket-luan"></a>
-## V. Kết luận
+<a id="vii-ket-luan"></a>
+## VII. Kết luận
 
 Hexagonal Architecture không phải là kiến trúc duy nhất hoặc "tốt nhất" cho mọi tình huống. Đây là lựa chọn phù hợp khi hệ thống có domain phức tạp, cần bảo vệ business logic khỏi hạ tầng, cần test isolate và phải phục vụ nhiều actor hoặc thay đổi công nghệ thường xuyên. Lựa chọn kiến trúc nên dựa trên độ phức tạp domain, khả năng thay đổi công nghệ và năng lực đội ngũ.
