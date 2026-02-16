@@ -383,7 +383,7 @@ Ví dụ: đổi DB từ MySQL sang MongoDB chỉ cần thay adapter, không tha
 <a id="v-khi-nao"></a>
 ## V. Khi nào nên áp dụng Hexagonal Architecture
 
-### Hệ thống có business phức tạp và thay đổi thường xuyên
+### 5.1. Hệ thống có business phức tạp và thay đổi thường xuyên
 
 Ví dụ kịch bản thực tế: Hệ thống thanh toán
 
@@ -401,10 +401,10 @@ Nếu business logic nằm trong controller/repository, mỗi thay đổi sẽ l
 
 Với Hexagonal, core được cô lập và ổn định. Việc thay đổi công nghệ hoặc thêm actor chỉ ảnh hưởng đến adapter.
 
-### Yêu cầu test automation và isolate test
-### Có nhiều external interfaces / multiple actors (REST, CLI, message, batch…)
-### Cần thay đổi hoặc mở rộng công nghệ bên ngoài thường xuyên.
-### Muốn di chuyển hoặc áp dụng Domain-Driven Design (DDD).
+### 5.2. Yêu cầu test automation và isolate test
+### 5.3. Có nhiều external interfaces / multiple actors (REST, CLI, message, batch…)
+### 5.4. Cần thay đổi hoặc mở rộng công nghệ bên ngoài thường xuyên.
+### 5.5. Muốn di chuyển hoặc áp dụng Domain-Driven Design (DDD).
 
 - DDD là cách thiết kế tập trung vào domain model (entity, value object, domain service, bounded context).
 - Khi business logic là trung tâm và cần được mô hình hóa rõ ràng, việc tách domain khỏi framework và hạ tầng là bắt buộc.
