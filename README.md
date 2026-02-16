@@ -65,7 +65,7 @@ Hexagonal Architecture (Ports & Adapters) là một mẫu kiến trúc giúp tá
 <a id="cac-thanh-phan-chinh"></a>
 ## 1.3. Các thành phần chính
 
-### Core Application (Bên trong ứng dụng)
+### Core Application
 
 - Chứa domain logic và use cases.
 - Core định nghĩa các ports và không phụ thuộc vào UI, database hay framework.
