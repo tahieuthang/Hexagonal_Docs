@@ -18,8 +18,7 @@ describe("TicketService Unit Tests", () => {
       create: mock.fn(async (ticket: Ticket) => ticket),
       findById: mock.fn(),
       findAll: mock.fn(),
-      update: mock.fn(),
-      delete: mock.fn()
+      update: mock.fn()
     };
     service = new TicketService(repositoryMock);
   });
@@ -130,7 +129,7 @@ describe("TicketService Unit Tests", () => {
 
       const calls = (repositoryMock.findById as any).mock.calls
       assert.strictEqual(calls.length, 1, "RepositoryMock.findById phải được gọi 1 lần")
-      assert.strictEqual(calls[0].arguments[0], expectedTicket.id)
+      assert.strictEqual(calls[0].arguments[0], targetId)
     });
     it("Ném lỗi TicketNotFoundError khi xem ticket", async () => {
       const targetId = 'el46fpudo'

@@ -1,22 +1,28 @@
 import type { Ticket, TicketStatus, TicketPriority, TicketTag } from "../entites/Ticket";
 
 export type CreateTicketInput = {
+  id: string;
   title: string;
   description: string;
-  status?: TicketStatus;
-  priority?: TicketPriority;
+  status: TicketStatus;
+  priority: TicketPriority;
   tags?: TicketTag[];
+};
+
+export type UpdateTicketInput = {
+  status: TicketStatus;
 };
 
 export type TicketFilters = {
   status?: string;
   priority?: string;
   tags?: string[];
+  fromDate?: Date;
 }
 
 export interface TicketServicePort {
   createTicket(data: CreateTicketInput): Promise<Ticket>
   getTicket(id: string): Promise<Ticket | null>
   listTickets(filters?: TicketFilters): Promise<Ticket[] | []>
-  updateTicket(ticket: Ticket, status: TicketStatus): Promise<Ticket>
+  updateTicket(id: string, data: UpdateTicketInput): Promise<Ticket>
 }

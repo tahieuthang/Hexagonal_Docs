@@ -1,208 +1,148 @@
-import type * as Readline from "node:readline/promises";
-import type { TicketServicePort, CreateTicketInput } from "../../core/ports/TicketServicePort"
+import type { TicketServicePort, CreateTicketInput } from "../../core/ports/TicketServicePort";
 import type { TicketStatus, TicketPriority, TicketTag } from "../../core/entites/Ticket";
-import { Ticket } from "../../core/entites/Ticket"
-import { log } from "node:console";
 
-  async function askWithRetry<T>(
-    rl: any, 
-    question: string, 
-    map: Record<string, T>, 
-    optionsDisplay: string
-  ): Promise<T> {
-    while (true) {
-      console.log(optionsDisplay);
-      const choice = await rl.question(question);
-      
-      if (map[choice]) {
-        return map[choice];
+export class TicketCLIAdapter {
+  constructor(private readonly ticketService: TicketServicePort) {}
+
+  public async run(): Promise<void> {
+    const [, , resource, action, ...args] = process.argv;
+
+    if (resource !== 'ticket') {
+      this.showHelp();
+      return;
+    }
+
+    try {
+      switch (action) {
+        case 'list':
+          await this.list(args);
+          break;
+        case 'create':
+          await this.create(args);
+          break;
+        case 'show':
+          await this.show(args);
+          break;
+        case 'update':
+          await this.update(args);
+          break;
+        default:
+          this.showHelp();
       }
-      console.log(`❌ Lựa chọn "${choice}" không hợp lệ. Vui lòng chọn lại!`);
+    } catch (error: any) {
+      console.error(`[ERROR]: ${error.message}`);
     }
   }
 
-async function askTagsWithRetry(
-  rl: any,
-  question: string,
-  map: Record<string, TicketTag>,
-  optionsDisplay: string
-): Promise<TicketTag[]> {
-  while (true) {
-    console.log(optionsDisplay);
-    const raw = await rl.question(question);
-    const input = raw.trim();
-
-    // Cho phép bỏ qua tag
-    if (input === "") {
-      return [];
-    }
-
-    const parts = input
-      .split(",")
-      .map((p: string) => p.trim())
-      .filter((p: string) => p !== "");
-
-    if (parts.length === 0) {
-      console.log('❌ Bạn chưa chọn tag nào. Vui lòng nhập lại (ví dụ: 1,2,4) hoặc bấm Enter để bỏ qua.');
-      continue;
-    }
-
-    // Kiểm tra trùng lặp
-    const unique = new Set(parts);
-    if (unique.size !== parts.length) {
-      console.log('❌ Có số tag bị trùng lặp. Vui lòng nhập lại (ví dụ: 1,2,4).');
-      continue;
-    }
-
-    // Kiểm tra ngoài phạm vi
-    const invalid = parts.filter((p: string) => !map[p]);
-    if (invalid.length > 0) {
-      console.log(`❌ Các lựa chọn sau không hợp lệ: ${invalid.join(", ")}. Vui lòng nhập lại.`);
-      continue;
-    }
-
-    return parts.map((p: string) => map[p]);
-  }
-}
-
-async function enterWithRetry<T> (
-  rl: any,
-  question: string,
-  validOptions: string[],
-): Promise<string> {
-  while (true) {
-    const choice = await rl.question(question)
-    const clearChoice = choice.trim().toLowerCase()
-    if(validOptions.includes(clearChoice) || clearChoice == '') {
-      return clearChoice
-    }
-    console.log(`❌ Lựa chọn "${choice}" không hợp lệ. Vui lòng nhập lại!`);
-  }
-}
-
-export async function handleListTickets(ticketService: TicketServicePort, rl: Readline.Interface) {
-  try {
-    console.log("\n--- 📝 CHẾ ĐỘ XEM ---")
-    console.log("1. Xem tất cả")
-    console.log("2. Lọc ticket (theo status, prority, tags)")
-    console.log("3. Xem chi tiết ticket")
-    console.log("4. Thoát")
-
-    const mode = await rl.question("Chọn chế độ xem: ")
-    let tickets: Ticket[] = []
-    let searchTicket: Ticket | null
-    if (mode === '2') {
-      const status = await enterWithRetry(
-        rl,
-        "Nhập status (open/in-progress/done): ",
-        ["open", "in-progress", "done"]
-      )
-      const priority = await enterWithRetry(
-        rl,
-        "Nhập priority (low/medium/high): ",
-        ["low", "medium", "high"]
-      )
-      const tags = await askTagsWithRetry(
-        rl,
-        "Nhập danh sách tag (ví dụ: 1,2,4) hoặc bấm Enter để bỏ qua: ",
-        { "1": "bug", "2": "feature", "3": "task", "4": "fix" },
-        "\nTag ticket:\n1. Bug\n2. Feature\n3. Task\n4. Fix"
-      )
-      const filters = { status, priority, tags }
-      tickets = await ticketService.listTickets(filters);
-    } else if (mode === '3') {
-      const ticketId = await rl.question("Nhập ID Ticket: ")
-      searchTicket = await ticketService.getTicket(ticketId)
-
-      if(searchTicket) tickets.push(searchTicket)
-      console.table(tickets)
-
-      const confirm = await rl.question("Bạn có muốn cập nhật Ticket? (y/n): ")
-      if(confirm.toLowerCase() == 'y') {
-        if(searchTicket) await handleUpdateTicket(ticketService, searchTicket, rl)
-          return
+  private parseOptions(args: string[]): Record<string, string> {
+    const options: Record<string, string> = {};
+    for (let i = 0; i < args.length; i++) {
+      const token = args[i]?.trim();
+      if (!token) continue;
+      if (token.startsWith('--')) {
+        const key = token.slice(2);
+        const value = args[i + 1];
+        if (value !== undefined && !value.startsWith('--')) {
+          options[key] = value;
+          i++;
+        } else {
+          options[key] = '';
+        }
       }
-    } else if (mode === '4') {
-      return
-    } else {
-      tickets = await ticketService.listTickets()
     }
+    return options;
+  }
 
+  private optionsToFilters(opts: Record<string, string>) {
+    const filters: any = {};
+    if (opts.status) filters.status = opts.status;
+    if (opts.priority) filters.priority = opts.priority;
+    if (opts.tags) {
+      filters.tags = opts.tags
+        .split(',')
+        .map((t) => t.trim())
+        .filter(Boolean);
+    }
+    return filters;
+  }
+
+  private async list(args: string[]) {
+    const opts = this.parseOptions(args);
+    
+    const filters = this.optionsToFilters(opts);
+    const tickets = await this.ticketService.listTickets(filters);
     if (tickets.length > 0) {
-      console.log("\n --- DANH SÁCH TICKET ---");
       console.table(tickets);
     } else {
-      console.log("\n => Không tìm thấy ticket nào phù hợp với bộ lọc của bạn.");
+      console.log('No tickets found.');
     }
-  } catch(error: any) {
-    const errorMessage = error instanceof Error ? error.message : "Đã xảy ra lỗi hệ thống"
-    console.error(`\n--- ❌ THẤT BẠI ---`)
-    console.error(`Lý do: ${errorMessage}`)
-    console.error(`------------------\n`)
   }
-}
 
-export async function handleCreateTicket(ticketService: TicketServicePort, rl: Readline.Interface) {
-  try {
-    console.log("--- CHƯƠNG TRÌNH QUẢN LÝ TICKET ---")
-
-    const title = await rl.question("Nhập tiêu đề ticket: ")
-
-    const description = await rl.question("Nhập mô tả ticket: ")
-
-    const status = await askWithRetry<TicketStatus>(
-      rl,
-      "Lựa chọn status (1-3): ",
-      { "1": "open", "2": "in-progress", "3": "done" },
-      "\nTrạng thái ticket:\n1. Open\n2. In progress\n3. Done"
-    );
-
-    const priority = await askWithRetry<TicketPriority>(
-      rl,
-      "Lựa chọn priority (1-3): ",
-      { "1": "low", "2": "medium", "3": "high" },
-      "\nĐộ ưu tiên:\n1. Low\n2. Medium\n3. High"
-    );
-
-    const tags = await askTagsWithRetry(
-      rl,
-      "Nhập danh sách tag (ví dụ: 1,2,4) hoặc bấm Enter để bỏ qua: ",
-      { "1": "bug", "2": "feature", "3": "task", "4": "fix" },
-      "\nTag ticket:\n1. Bug\n2. Feature\n3. Task\n4. Fix"
-    );
-
-    const data: CreateTicketInput = {
-      title,
-      description,
-      status,
-      priority,
-      tags
+  private async create(args: string[]) {
+    const opts = this.parseOptions(args);
+    const input: CreateTicketInput = {
+      id: Math.random().toString(36).substr(2, 9),
+      title: opts.title ?? '',
+      description: opts.description ?? '',
+      status: opts.status as TicketStatus,
+      priority: opts.priority as TicketPriority,
+      tags: opts.tags
+        ? opts.tags.split(',').map((t) => t.trim()).filter(Boolean) as TicketTag[]
+        : [],
+    };
+    try {
+      const ticket = await this.ticketService.createTicket(input);
+      console.log(`✅ Created ticket "${ticket.title}" success with ID ${ticket.id}`);
+    } catch (error: any) {
+      console.log(`${error.message}`);
     }
-    const createdTicket = await ticketService.createTicket(data)
-    console.log(`✅ Tạo ticket "${createdTicket.title}" thành công!`);
-  } catch(error: any) {
-    const errorMessage = error instanceof Error ? error.message : "Đã xảy ra lỗi hệ thống"
-    console.error(`\n--- ❌ THẤT BẠI ---`)
-    console.error(`Lý do: ${errorMessage}`)
-    console.error(`------------------\n`)
   }
-}
 
-async function handleUpdateTicket(ticketService: TicketServicePort, ticket: Ticket, rl: Readline.Interface) {
-  try {
-    const status = await askWithRetry<TicketStatus>(
-      rl,
-      "Cập nhật status (1-3): ",
-      { "1": "open", "2": "in-progress", "3": "done" },
-      "\nTrạng thái ticket:\n1. Open\n2. In progress\n3. Done"
-    );
-    const updatedTicket = await ticketService.updateTicket(ticket, status)
-    console.log(`✅ Update status ticket "${updatedTicket.title}" thành công!`);
-    return updatedTicket
-  } catch(error: any) {
-    const errorMessage = error instanceof Error ? error.message : "Đã xảy ra lỗi hệ thống"
-    console.error(`\n--- ❌ THẤT BẠI ---`)
-    console.error(`Lý do: ${errorMessage}`)
-    console.error(`------------------\n`)
+  private async show(args: string[]) {
+    const id = args[0];
+    if (!id) {
+      console.log('You must provide a ticket id to show.');
+      return;
+    }
+    try {
+      const ticket = await this.ticketService.getTicket(id);
+      console.table([ticket]);
+    } catch(error: any) {
+      console.log(`${error.message}`);
+    }
+  }
+
+  private async update(args: string[]) {
+    const opts = this.parseOptions(args);
+    try {
+      const ticket = await this.ticketService.updateTicket(args[0] as string, {
+        status: opts.status as TicketStatus
+      });
+      console.log(`✅ Update ticket "${ticket.title}" success with ID ${ticket.id}`);
+    } catch (error: any) {
+      console.log(`${error.message}`);
+    }
+  }
+
+  private showHelp() {
+    console.log(`
+Usage: npx ts-node src/main.ts -- ticket <command> [options]
+
+Commands:
+  list                                  List all tickets
+        --status <status>               Filter by status
+        --priority <priority>           Filter by priority
+        --tags <tag1,tag2>              Filter by tags (comma-separated)
+
+  create                                Create a new ticket
+        --title <text>                  Title (required)
+        --description <text>            Description (required)
+        --status <status>               Status (optional)
+        --priority <priority>           Priority (optional)
+        --tags <tag1,tag2>              Tags (optional, comma-separated)
+
+  show <id>                             Show ticket details by id
+
+`);
   }
 }

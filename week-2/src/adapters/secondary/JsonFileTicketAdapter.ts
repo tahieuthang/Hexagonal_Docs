@@ -41,19 +41,8 @@ export class JsonFileTicketAdapter implements TicketRepositoryPort {
     return searchTicket ? Ticket.formRaw(searchTicket) : null
   }
 
-  async findAll(filters?: TicketFilters): Promise<Ticket[] | []> {
+  async findAll(): Promise<Ticket[] | []> {
     let tickets = await this.readRaw()
-    if(filters) {
-      if(filters?.status) {
-        tickets = tickets.filter(t => t.status === filters.status)
-      }
-      if(filters?.priority) {
-        tickets = tickets.filter(t => t.priority === filters.priority)
-      }
-      if(filters?.tags && filters?.tags?.length > 0) {
-        tickets = tickets.filter(t => t.tags?.some((tag: string) => filters?.tags?.includes(tag)))
-      }
-    }
     return tickets.map((ticket) => Ticket.formRaw(ticket))
   }
 
