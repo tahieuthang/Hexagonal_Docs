@@ -1,17 +1,13 @@
-import type { TicketRepositoryPort } from "../ports/TicketRepositoryPort"
-import type { CreateTicketInput, TicketServicePort, UpdateTicketInput } from "../ports/TicketServicePort"
-import { Ticket, TicketStatus } from "../entites/Ticket"
-import { TicketNotFoundError } from "../errors/TicketNotFoundError"
-import { TicketFilters } from "../../core/ports/TicketServicePort";
+import type { TicketRepositoryPort } from "@ports/TicketRepositoryPort"
+import type { CreateTicketInput, TicketServicePort, UpdateTicketInput, TicketFilters } from "@ports/TicketServicePort"
+import { Ticket, TicketStatus } from "@entities/Ticket"
+import { TicketNotFoundError } from "@errors/TicketNotFoundError"
 
 export class TicketService implements TicketServicePort {
   constructor(private readonly ticketRepository: TicketRepositoryPort) {}
 
   async createTicket(data: CreateTicketInput): Promise<Ticket> {
-    const { title, description, status, priority, tags = [], id } = data
-    const createdAt = new Date()
-    const ticket = new Ticket(id, title, description, status, priority, createdAt, undefined, tags)
-    return await this.ticketRepository.create(ticket)
+    return await this.ticketRepository.create(data)
   }
 
   async getTicket(id: string): Promise<Ticket | null> {

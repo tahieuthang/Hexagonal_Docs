@@ -1,5 +1,5 @@
-import type { TicketServicePort, CreateTicketInput } from "../../core/ports/TicketServicePort";
-import type { TicketStatus, TicketPriority, TicketTag } from "../../core/entites/Ticket";
+import type { TicketServicePort, CreateTicketInput } from "@ports/TicketServicePort";
+import type { TicketStatus, TicketPriority, TicketTag } from "@entities/Ticket";
 
 export class TicketCLIAdapter {
   constructor(private readonly ticketService: TicketServicePort) {}
@@ -67,39 +67,49 @@ export class TicketCLIAdapter {
   }
 
   private async list(args: string[]) {
-    const opts = this.parseOptions(args);
-    
-    const filters = this.optionsToFilters(opts);
-    const tickets = await this.ticketService.listTickets(filters);
-    if (tickets.length > 0) {
-      console.table(tickets);
-    } else {
-      console.log('No tickets found.');
+    try {
+      const opts = this.parseOptions(args);
+      const filters = this.optionsToFilters(opts);
+      const tickets = await this.ticketService.listTickets(filters);
+      
+      if (tickets.length > 0) {
+        console.table(tickets);
+      } else {
+        console.log('No tickets found.');
+      }
+    } catch (err) {
+      console.error('[CLI] List command failed:', err);
+      throw err;
     }
   }
 
   private async create(args: string[]) {
-    const opts = this.parseOptions(args);
-    const input: CreateTicketInput = {
-      id: Math.random().toString(36).substr(2, 9),
-      title: opts.title ?? '',
-      description: opts.description ?? '',
-      status: opts.status as TicketStatus,
-      priority: opts.priority as TicketPriority,
-      tags: opts.tags
-        ? opts.tags.split(',').map((t) => t.trim()).filter(Boolean) as TicketTag[]
-        : [],
-    };
     try {
+      const opts = this.parseOptions(args);
+      
+      const input: CreateTicketInput = {
+        id: Math.random().toString(36).substr(2, 9),
+        title: opts.title ?? '',
+        description: opts.description ?? '',
+        status: opts.status as TicketStatus,
+        priority: opts.priority as TicketPriority,
+        tags: opts.tags
+          ? opts.tags.split(',').map((t) => t.trim()).filter(Boolean) as TicketTag[]
+          : [],
+      };
+      
       const ticket = await this.ticketService.createTicket(input);
       console.log(`✅ Created ticket "${ticket.title}" success with ID ${ticket.id}`);
     } catch (error: any) {
-      console.log(`${error.message}`);
+      console.error('[CLI] Create command failed:', error.message || error);
+      throw error;
     }
   }
 
   private async show(args: string[]) {
     const id = args[0];
+    console.log(id);
+    
     if (!id) {
       console.log('You must provide a ticket id to show.');
       return;
@@ -113,12 +123,24 @@ export class TicketCLIAdapter {
   }
 
   private async update(args: string[]) {
-    const opts = this.parseOptions(args);
+    const id = args[0];
+    const opts = this.parseOptions(args.slice(1));
+    if (!id) {
+      console.log('You must provide a ticket id to update.');
+      return;
+    }
+    if (!opts.status) {
+      console.log('You must provide --status to update.');
+      return;
+    }
     try {
-      const ticket = await this.ticketService.updateTicket(args[0] as string, {
-        status: opts.status as TicketStatus
-      });
-      console.log(`✅ Update ticket "${ticket.title}" success with ID ${ticket.id}`);
+      const ticket = await this.ticketService.getTicket(id);
+      if (!ticket) {
+        console.log(`Ticket with id "${id}" not found.`);
+        return;
+      }
+      const updatedTicket = await this.ticketService.updateTicket(id, { status: opts.status as TicketStatus });
+      console.log(`✅ Updated ticket "${updatedTicket.title}" status to ${updatedTicket.status}`);
     } catch (error: any) {
       console.log(`${error.message}`);
     }
@@ -142,6 +164,9 @@ Commands:
         --tags <tag1,tag2>              Tags (optional, comma-separated)
 
   show <id>                             Show ticket details by id
+
+  update <id>                           Update ticket status
+        --status <status>               New status (required)
 
 `);
   }

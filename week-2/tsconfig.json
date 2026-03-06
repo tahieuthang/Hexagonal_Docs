@@ -12,6 +12,18 @@
     "lib": ["esnext"],
     "types": ["node"],
 
+    // Path Mapping
+    "baseUrl": "./src",
+    "paths": {
+      "@ports/*": ["core/ports/*"],
+      "@services/*": ["core/services/*"],
+      "@entities/*": ["core/entites/*"],
+      "@errors/*": ["core/errors/*"],
+      "@adapters/*": ["adapters/*"],
+      "@utils/*": ["untils/*"],
+      "@enums/*": ["core/enums/*"]
+    },
+
     // Other Outputs
     "sourceMap": true,
     "declaration": true,
@@ -33,6 +45,9 @@
     "strict": true,
     "jsx": "react-jsx",
     "skipLibCheck": true
+  },
+  "ts-node": {
+    "require": ["tsconfig-paths/register"]
   },
   "exclude": ["dist", "tests"]
 }

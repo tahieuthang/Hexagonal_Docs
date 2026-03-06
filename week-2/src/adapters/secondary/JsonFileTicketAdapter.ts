@@ -1,10 +1,10 @@
-import type { TicketRepositoryPort } from "../../core/ports/TicketRepositoryPort"
-import { Ticket, TicketStatus } from "../../core/entites/Ticket"
-import { TicketFilters } from "../../core/ports/TicketServicePort";
+import type { TicketRepositoryPort } from "@ports/TicketRepositoryPort"
+import { Ticket, TicketStatus } from "@entities/Ticket"
+import { TicketFilters } from "@ports/TicketServicePort";
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
 import { error } from "node:console";
-import { TicketNotFoundError } from "../../core/errors/TicketNotFoundError";
+import { TicketNotFoundError } from "@errors/TicketNotFoundError";
 
 export class JsonFileTicketAdapter implements TicketRepositoryPort {
   private readonly filePath = path.resolve(process.cwd(), 'data', 'tickets.json');

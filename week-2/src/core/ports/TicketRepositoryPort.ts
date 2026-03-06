@@ -1,9 +1,9 @@
 import type { Ticket } from "../entites/Ticket";
-import { TicketFilters } from "./TicketServicePort";
+import { CreateTicketInput, TicketFilters } from "./TicketServicePort";
 import { TicketStatus } from "../entites/Ticket";
 
 export interface TicketRepositoryPort {
-  create(ticket: Ticket): Promise<Ticket>
+  create(data: CreateTicketInput): Promise<Ticket>
   findById(id: string): Promise<Ticket | null>
   findAll(): Promise<Ticket[] | []>
   update(ticket: Ticket): Promise<Ticket>
