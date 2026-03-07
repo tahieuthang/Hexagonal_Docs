@@ -1,6 +1,6 @@
 import { InvalidDataError } from "@errors/InvalidDataError"
 import { TicketNotFoundError } from "@errors/TicketNotFoundError";
-export type TicketStatus = 'open' | 'in-progress' | 'done'
+export type TicketStatus = 'open' | 'in-progress' | 'done' | 'cancelled'
 export type TicketPriority = 'low' | 'medium' | 'high' | 'urgent'
 export type TicketTag = 'bug' | 'feature' | 'task' | 'fix';
 

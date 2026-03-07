@@ -1,7 +1,7 @@
+import { CreateTicketTag } from "@enums/OdooTicketDTO";
 import type { Ticket, TicketStatus, TicketPriority, TicketTag } from "../entites/Ticket";
 
 export type CreateTicketInput = {
-  id: string;
   title: string;
   description: string;
   status: TicketStatus;
@@ -25,4 +25,5 @@ export interface TicketServicePort {
   getTicket(id: string): Promise<Ticket | null>
   listTickets(filters?: TicketFilters): Promise<Ticket[] | []>
   updateTicket(id: string, data: UpdateTicketInput): Promise<Ticket>
+  createTag(data: CreateTicketTag): Promise<void>
 }

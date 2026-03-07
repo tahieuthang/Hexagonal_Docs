@@ -2,6 +2,7 @@ import type { TicketRepositoryPort } from "@ports/TicketRepositoryPort"
 import type { CreateTicketInput, TicketServicePort, UpdateTicketInput, TicketFilters } from "@ports/TicketServicePort"
 import { Ticket, TicketStatus } from "@entities/Ticket"
 import { TicketNotFoundError } from "@errors/TicketNotFoundError"
+import { CreateTicketTag } from "@enums/OdooTicketDTO"
 
 export class TicketService implements TicketServicePort {
   constructor(private readonly ticketRepository: TicketRepositoryPort) {}
@@ -51,5 +52,9 @@ export class TicketService implements TicketServicePort {
       throw new Error("Đây đã là status hiện tại của ticket!")
     }
     return await this.ticketRepository.update(checkTicket)
+  }
+
+  async createTag(data: CreateTicketTag): Promise<void> {
+    await this.ticketRepository.createTag(data)
   }
 }

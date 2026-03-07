@@ -2,13 +2,14 @@ import type { TicketRepositoryPort } from "@ports/TicketRepositoryPort"
 import { Ticket, TicketStatus } from "@entities/Ticket"
 import { CreateTicketInput, TicketFilters } from "@ports/TicketServicePort";
 import { HttpClientAdapter } from "@adapters/primary/HttpClientAdapter";
-import type { OdooTicketDTO } from "@enums/OdooTicketDTO";
+import type { CreateTicketTag, OdooTicketDTO } from "@enums/OdooTicketDTO";
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
-import { error } from "node:console";
+import { error, log } from "node:console";
 import { TicketNotFoundError } from "@errors/TicketNotFoundError";
 import { TicketPriority, TicketTag } from "@entities/Ticket";
 import { title } from "node:process";
+import { TIMEOUT } from "node:dns";
 
 export class OdooTicketAdapter implements TicketRepositoryPort {
 
@@ -23,10 +24,11 @@ export class OdooTicketAdapter implements TicketRepositoryPort {
 
   // Mapping từ Odoo sang domain
   private STAGE_STATUS_MAP: Record<string, TicketStatus> = {
-    "New": "open",
-    "In Progress": "in-progress",
-    "Solved": "done",
-    "Closed": "done"
+    "1": "open",
+    "2": "in-progress",
+    "3": "done",
+    "4": "done",
+    "5": "cancelled"
   }
 
   private PRIORITY_MAP: Record<string, TicketPriority> = {
@@ -37,14 +39,14 @@ export class OdooTicketAdapter implements TicketRepositoryPort {
   }
 
   private TAG_MAP: Record<number, TicketTag> = {
-    1: "bug",
-    2: "feature",
-    3: "task",
-    4: "fix"
+    7: "bug",
+    6: "feature",
+    9: "task",
+    8: "fix"
   }
 
   private mapStatus(stage: any): TicketStatus {
-    const name = stage?.[1]
+    const name = stage?.[0]
     return this.STAGE_STATUS_MAP[name] ?? "open"
   }
   
@@ -62,7 +64,8 @@ export class OdooTicketAdapter implements TicketRepositoryPort {
   private STATUS_STAGE_MAP: Record<TicketStatus, number> = {
     "open": 1,
     "in-progress": 2,
-    "done": 3
+    "done": 3 ,
+    "cancelled": 5
   }
   
   private PRIORITY_VALUE_MAP: Record<TicketPriority, string> = {
@@ -73,10 +76,10 @@ export class OdooTicketAdapter implements TicketRepositoryPort {
   }
   
   private TAG_ID_MAP: Record<TicketTag, number> = {
-    "bug": 1,
-    "feature": 2,
-    "task": 3,
-    "fix": 4
+    "bug": 7,
+    "feature": 6,
+    "task": 9,
+    "fix": 8
   }
 
   private mapStatusToStage(status: TicketStatus): number {
@@ -125,125 +128,159 @@ export class OdooTicketAdapter implements TicketRepositoryPort {
   }
 
   async findAll(): Promise<Ticket[]> {
+    try {
+      const uid = await this.authenticate()
+  
+      const result = await this.httpClient.callRPC<OdooTicketDTO[]>("call", {
+        service: "object",
+        method: "execute_kw",
+        args: [
+          this.db,
+          uid,
+          this.password,
+          "helpdesk.ticket",
+          "search_read",
+          [[]],
+          {
+            fields: ["id", "name", "description", "stage_id", "priority", "tag_ids", "create_date", "write_date"]
+          }
+        ]
+      })
+  
+      return result.map((t) => new Ticket(
+        String(t.id),
+        t.name,
+        t.description,
+        this.mapStatus(t.stage_id),
+        this.mapPriority(t.priority),
+        new Date(t.create_date),
+        t.write_date ? new Date(t.write_date) : undefined,
+        this.mapTags(t.tag_ids)
+      ))
+    } catch (error: any) {
+      throw new Error(`Lỗi ${error.message}`)
+    }
 
-    const uid = await this.authenticate()
-
-    const result = await this.httpClient.callRPC<OdooTicketDTO[]>("call", {
-      service: "object",
-      method: "execute_kw",
-      args: [
-        this.db,
-        uid,
-        this.password,
-        "helpdesk.ticket",
-        "search_read",
-        [[]],
-        {
-          fields: ["id", "name", "description", "stage_id", "priority", "tag_ids", "create_date", "write_date"]
-        }
-      ]
-    })
-    
-    return result.map((t) => new Ticket(
-      String(t.id),
-      t.name,
-      t.description,
-      this.mapStatus(t.stage_id),
-      this.mapPriority(t.priority),
-      new Date(t.create_date),
-      t.write_date ? new Date(t.write_date) : undefined,
-      this.mapTags(t.tag_ids)
-    ))
   }
 
   async create(data: CreateTicketInput): Promise<Ticket> {
+    try {
+      const uid = await this.authenticate()
+  
+      const id = await this.httpClient.callRPC<number>("call", {
+        service: "object",
+        method: "execute_kw",
+        args: [
+          this.db,
+          uid,
+          this.password,
+          "helpdesk.ticket",
+          "create",
+          [{
+            name: data.title,
+            description: data.description,
+            stage_id: this.mapStatusToStage(data.status),
+            priority: this.mapPriorityToOdoo(data.priority),
+            tag_ids: data?.tags?.length ? [[6, 0, this.mapTagsToOdoo(data.tags)]] : []
+          }]
+        ]
+      })
+  
+      const [ticket] = await this.httpClient.callRPC<any[]>("call", {
+        service: "object",
+        method: "execute_kw",
+        args: [
+          this.db,
+          uid,
+          this.password,
+          "helpdesk.ticket",
+          "read",
+          [[id]],
+          { fields: ["id","name","description","priority","stage_id","create_date","write_date","tag_ids"] }
+        ]
+      })
+      
+      return this.toDomain(ticket)
+    } catch (error: any) {
+      throw new Error(`Lỗi ${error.message}`)
+    }
 
-    const uid = await this.authenticate()
-
-    const id = await this.httpClient.callRPC<number>("call", {
-      service: "object",
-      method: "execute_kw",
-      args: [
-        this.db,
-        uid,
-        this.password,
-        "helpdesk.ticket",
-        "create",
-        [{
-          name: data.title,
-          description: data.description,
-          stage_id: this.mapStatusToStage(data.status),
-          priority: this.mapPriorityToOdoo(data.priority),
-          tag_ids: data.tags ? this.mapTagsToOdoo(data.tags) : []
-        }]
-      ]
-    })
-
-    const [ticket] = await this.httpClient.callRPC<any[]>("call", {
-      service: "object",
-      method: "execute_kw",
-      args: [
-        this.db,
-        uid,
-        this.password,
-        "helpdesk.ticket",
-        "read",
-        [[id]],
-        { fields: ["id","name","description","priority","stage_id","create_date","write_date","tag_ids"] }
-      ]
-    })
-    return this.toDomain(ticket)
   }
 
   async findById(id: string): Promise<Ticket | null> {
-
-    const uid = await this.authenticate()
-
-    const result = await this.httpClient.callRPC<any[]>("call", {
-      service: "object",
-      method: "execute_kw",
-      args: [
-        this.db,
-        uid,
-        this.password,
-        "helpdesk.ticket",
-        "read",
-        [[id]],
-        {
-          fields: ["id","name","description","priority","stage_id","create_date","write_date","tag_ids"]
-        }
-      ]
-    })
-
-    if (!result.length) return null
-
-    const searchTicket = result.find((t) => t.id === id)
-    return this.toDomain(searchTicket)
+    try {
+      const uid = await this.authenticate()
+  
+      const result = await this.httpClient.callRPC<any[]>("call", {
+        service: "object",
+        method: "execute_kw",
+        args: [
+          this.db,
+          uid,
+          this.password,
+          "helpdesk.ticket",
+          "read",
+          [[Number(id)]],
+          {
+            fields: ["id","name","description","priority","stage_id","create_date","write_date","tag_ids"]
+          }
+        ]
+      })
+  
+      if (!result.length) return null
+      return this.toDomain(result[0])
+    } catch (error: any) {
+      throw new Error(`Lỗi ${error.message}`)
+    }
   }
 
   async update(ticket: Ticket): Promise<Ticket> {
-
-    const uid = await this.authenticate()
-
-    await this.httpClient.callRPC<boolean>("call", {
-      service: "object",
-      method: "execute_kw",
-      args: [
-        this.db,
-        uid,
-        this.password,
-        "helpdesk.ticket",
-        "write",
-        [
-          [Number(ticket.id)],
-          {
-            name: ticket.title,
-            description: ticket.description
-          }
+    try {
+      const uid = await this.authenticate()
+  
+      const result = await this.httpClient.callRPC<boolean>("call", {
+        service: "object",
+        method: "execute_kw",
+        args: [
+          this.db,
+          uid,
+          this.password,
+          "helpdesk.ticket",
+          "write",
+          [
+            [Number(ticket.id)],
+            {
+              stage_id: this.mapStatusToStage(ticket.status),
+            }
+          ]
         ]
-      ]
-    })
+      })
+      return ticket
+    } catch (error: any) {
+      throw new Error(`Lỗi ${error.message}`)
+    }
+  }
 
-    return ticket
+  async createTag(data: CreateTicketTag): Promise<void> {
+    try {
+      const uid = await this.authenticate()
+  
+      await this.httpClient.callRPC<number>("call", {
+        service: "object",
+        method: "execute_kw",
+        args: [
+          this.db,
+          uid,
+          this.password,
+          "helpdesk.tag",
+          "create",
+          [{
+            name: data.tag
+          }]
+        ]
+      })
+    } catch (error: any) {
+      throw new Error(`Lỗi ${error.message}`)
+    }
   }
 }

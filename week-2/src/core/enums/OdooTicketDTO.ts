@@ -1,3 +1,5 @@
+import { TicketTag } from "@entities/Ticket"
+
 export interface OdooTicketDTO {
   id: number
   name: string
@@ -7,4 +9,8 @@ export interface OdooTicketDTO {
   tag_ids: number[]
   create_date: string
   write_date?: string
+}
+
+export type CreateTicketTag = {
+  tag: TicketTag
 }

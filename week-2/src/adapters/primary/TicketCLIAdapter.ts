@@ -1,5 +1,6 @@
-import type { TicketServicePort, CreateTicketInput } from "@ports/TicketServicePort";
+import type { TicketServicePort, CreateTicketInput, TicketFilters } from "@ports/TicketServicePort";
 import type { TicketStatus, TicketPriority, TicketTag } from "@entities/Ticket";
+import { CreateTicketTag } from "@enums/OdooTicketDTO";
 
 export class TicketCLIAdapter {
   constructor(private readonly ticketService: TicketServicePort) {}
@@ -23,8 +24,17 @@ export class TicketCLIAdapter {
         case 'show':
           await this.show(args);
           break;
+        case 'new':
+          await this.itemNew(args);
+          break;
+        case 'unprocessed':
+          await this.itemUnprocessed(args);
+          break;
         case 'update':
           await this.update(args);
+          break;
+        case 'createtags':
+          await this.createTag(args);
           break;
         default:
           this.showHelp();
@@ -86,15 +96,13 @@ export class TicketCLIAdapter {
   private async create(args: string[]) {
     try {
       const opts = this.parseOptions(args);
-      
       const input: CreateTicketInput = {
-        id: Math.random().toString(36).substr(2, 9),
         title: opts.title ?? '',
         description: opts.description ?? '',
         status: opts.status as TicketStatus,
         priority: opts.priority as TicketPriority,
         tags: opts.tags
-          ? opts.tags.split(',').map((t) => t.trim()).filter(Boolean) as TicketTag[]
+          ? opts.tags.split(' ').map((t) => t.trim()).filter(Boolean) as TicketTag[]
           : [],
       };
       
@@ -108,8 +116,6 @@ export class TicketCLIAdapter {
 
   private async show(args: string[]) {
     const id = args[0];
-    console.log(id);
-    
     if (!id) {
       console.log('You must provide a ticket id to show.');
       return;
@@ -117,6 +123,31 @@ export class TicketCLIAdapter {
     try {
       const ticket = await this.ticketService.getTicket(id);
       console.table([ticket]);
+    } catch(error: any) {
+      console.log(`${error.message}`);
+    }
+  }
+
+  private async itemNew(args: string[]) {
+    try {
+      const now = new Date()
+      const filter: TicketFilters = {
+        fromDate: now
+      }
+      const tickets = await this.ticketService.listTickets(filter);
+      console.table(tickets);
+    } catch(error: any) {
+      console.log(`${error.message}`);
+    }
+  }
+
+  private async itemUnprocessed(args: string[]) {
+    try {
+      const filter: TicketFilters = {
+        status: 'open'
+      }
+      const tickets = await this.ticketService.listTickets(filter);
+      console.table(tickets);
     } catch(error: any) {
       console.log(`${error.message}`);
     }
@@ -134,15 +165,24 @@ export class TicketCLIAdapter {
       return;
     }
     try {
-      const ticket = await this.ticketService.getTicket(id);
-      if (!ticket) {
-        console.log(`Ticket with id "${id}" not found.`);
-        return;
-      }
       const updatedTicket = await this.ticketService.updateTicket(id, { status: opts.status as TicketStatus });
       console.log(`✅ Updated ticket "${updatedTicket.title}" status to ${updatedTicket.status}`);
     } catch (error: any) {
       console.log(`${error.message}`);
+    }
+  }
+
+  private async createTag(args: string[]) {
+    try {
+      const opts = this.parseOptions(args);
+      const input: CreateTicketTag = {
+        tag: opts.tags as TicketTag
+      };
+      await this.ticketService.createTag(input);
+      console.log(`✅ Create Ticket Tag successfully!!!`);
+    } catch (error: any) {
+      console.error('[CLI] Create ticket command failed:', error.message || error);
+      throw error;
     }
   }
 
