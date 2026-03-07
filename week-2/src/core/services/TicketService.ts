@@ -31,13 +31,14 @@ export class TicketService implements TicketServicePort {
       if(filters?.tags && filters?.tags?.length > 0) {
         tickets = tickets.filter(t => t.tags?.some((tag: string) => filters?.tags?.includes(tag)))
       }
-      if(filters?.fromDate) {
-        const fromTime = filters?.fromDate?.getTime()
+      if(filters?.currentDate) {
+        const currentTime = filters?.currentDate?.getTime()
         const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000
+        
         tickets = tickets.filter(t => { 
           const ticketTime = t.createdAt.getTime()
-          const isWithin24Hours = (ticketTime - fromTime) <= TWENTY_FOUR_HOURS_MS
-          return isWithin24Hours && ticketTime > fromTime
+          const timeDiff = currentTime - ticketTime
+          return timeDiff >= 0 && timeDiff <= TWENTY_FOUR_HOURS_MS
         })
       }
     }

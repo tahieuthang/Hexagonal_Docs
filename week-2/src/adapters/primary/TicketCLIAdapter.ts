@@ -1,6 +1,7 @@
 import type { TicketServicePort, CreateTicketInput, TicketFilters } from "@ports/TicketServicePort";
-import type { TicketStatus, TicketPriority, TicketTag } from "@entities/Ticket";
+import type { TicketStatus, TicketPriority, TicketTag, Ticket } from "@entities/Ticket";
 import { CreateTicketTag } from "@enums/OdooTicketDTO";
+import { formatTimestamp } from "@utils/formatTime";
 
 export class TicketCLIAdapter {
   constructor(private readonly ticketService: TicketServicePort) {}
@@ -76,6 +77,21 @@ export class TicketCLIAdapter {
     return filters;
   }
 
+  private formatTicket(tickets: Ticket[]) {
+    return tickets.map(t => {
+      return {
+        ID: t.id,
+        Title: t.title,
+        Description: t.description.replace(/<\/?[^>]+(>|$)/g, ""),
+        Status: t.status,
+        Priority: t.priority,
+        Tags: t.tags ? t.tags.join(', ') : "-",
+        CreatedAt: formatTimestamp(t.createdAt),
+        UpdatedAt: t.updatedAt ? formatTimestamp(t.updatedAt) : "-",
+      }
+    })
+  }
+
   private async list(args: string[]) {
     try {
       const opts = this.parseOptions(args);
@@ -83,7 +99,9 @@ export class TicketCLIAdapter {
       const tickets = await this.ticketService.listTickets(filters);
       
       if (tickets.length > 0) {
-        console.table(tickets);
+        const formatTickets = this.formatTicket(tickets)
+        console.log("--- DANH SÁCH TICKET ---");
+        console.table(formatTickets);
       } else {
         console.log('No tickets found.');
       }
@@ -132,10 +150,16 @@ export class TicketCLIAdapter {
     try {
       const now = new Date()
       const filter: TicketFilters = {
-        fromDate: now
+        currentDate: now
       }
       const tickets = await this.ticketService.listTickets(filter);
-      console.table(tickets);
+      if (tickets.length > 0) {
+        const formatTickets = this.formatTicket(tickets)
+        console.log("--- DANH SÁCH TICKET MỚI NHẤT ---");
+        console.table(formatTickets);
+      } else {
+        console.log('No tickets found.');
+      }
     } catch(error: any) {
       console.log(`${error.message}`);
     }
@@ -147,7 +171,13 @@ export class TicketCLIAdapter {
         status: 'open'
       }
       const tickets = await this.ticketService.listTickets(filter);
-      console.table(tickets);
+      if (tickets.length > 0) {
+        const formatTickets = this.formatTicket(tickets)
+        console.log("--- DANH SÁCH TICKET CHƯA XỬ LÝ ---");
+        console.table(formatTickets);
+      } else {
+        console.log('No tickets found.');
+      }
     } catch(error: any) {
       console.log(`${error.message}`);
     }

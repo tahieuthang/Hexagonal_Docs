@@ -17,7 +17,7 @@ export type TicketFilters = {
   status?: string;
   priority?: string;
   tags?: string[];
-  fromDate?: Date;
+  currentDate?: Date;
 }
 
 export interface TicketServicePort {
