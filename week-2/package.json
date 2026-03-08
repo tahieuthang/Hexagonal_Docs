@@ -7,8 +7,9 @@
     "build": "tsc",
     "start": "node dist/main.js",
     "dev": "ts-node src/main.ts",
-    "test:service": "node --test -r ts-node/register tests/domain/TicketService.test.ts",
-    "test:entities": "node --test -r ts-node/register tests/domain/TicketEntities.test.ts"
+    "unit-test:service": "node --test -r ts-node/register tests/unit/TicketService.test.ts",
+    "unit-test:entities": "node --test -r ts-node/register tests/unit/TicketEntities.test.ts",
+    "integration-test:odoo": "node --test -r ts-node/register tests/integration/adapters/OdooTicketAdapter.test.ts"
   },
   "keywords": [],
   "author": "",

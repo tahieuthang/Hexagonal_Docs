@@ -85,7 +85,7 @@ export class TicketCLIAdapter {
         Description: t.description.replace(/<\/?[^>]+(>|$)/g, ""),
         Status: t.status,
         Priority: t.priority,
-        Tags: t.tags ? t.tags.join(', ') : "-",
+        Tags: (t.tags && t.tags.length > 0) ? t.tags.join(', ') : "-",
         CreatedAt: formatTimestamp(t.createdAt),
         UpdatedAt: t.updatedAt ? formatTimestamp(t.updatedAt) : "-",
       }
