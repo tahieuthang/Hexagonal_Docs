@@ -4,18 +4,12 @@
 Công cụ CLI quản lý ticket được xây dựng theo kiến trúc **Hexagonal Architecture** tích hợp hệ thống Ticket với Odoo ERP thông qua giao thức JSON-RPC, tuân thủ nghiêm ngặt.
 
 ## Mục lục
-- [CLI Ticket Manager - Hexagonal Architecture](#cli-ticket-manager---hexagonal-architecture)
-  - [Mục lục](#mục-lục)
-  - [I. Hướng dẫn cài đặt (Setup Instructions)](#i-hướng-dẫn-cài-đặt-setup-instructions)
-    - [Cấu hình môi trường](#cấu-hình-môi-trường)
-    - [Authentication](#authentication)
-  - [II. Tài liệu luồng dữ liệu (Flow Documentation)](#ii-tài-liệu-luồng-dữ-liệu-flow-documentation)
-  - [III. Các lệnh CLI Odoo (CLI Commands)](#iii-các-lệnh-cli-odoo-cli-commands)
-  - [IV. Kiểm thử tích hợp (Integration Testing)](#iv-kiểm-thử-tích-hợp-integration-testing)
-  - [V. Cấu trúc thư mục bổ sung (Week 3)](#v-cấu-trúc-thư-mục-bổ-sung-week-3)
-    - [Các lệnh hỗ trợ](#các-lệnh-hỗ-trợ)
-  - [VI. Demo sản phẩm](#vi-demo-sản-phẩm)
-    - [Video demo:](#video-demo)
+- [I. Hướng dẫn cài đặt (Setup Instructions)](#i-hướng-dẫn-cài-đặt-setup-instructions)
+- [II. Tài liệu luồng dữ liệu (Flow Documentation)](#ii-tài-liệu-luồng-dữ-liệu-flow-documentation)
+- [III. Các lệnh CLI Odoo (CLI Commands)](#iii-các-lệnh-cli-odoo-cli-commands)
+- [IV. Kiểm thử tích hợp (Integration Testing)](#iv-kiểm-thử-tích-hợp-integration-testing)
+- [V. Cấu trúc thư mục bổ sung (Week 3)](#v-cấu-trúc-thư-mục-bổ-sung-week-3)
+- [VI. Demo sản phẩm](#sản-phẩm)
 
 <a id="cài-đặt"></a>
 ## I. Hướng dẫn cài đặt (Setup Instructions)
@@ -133,6 +127,18 @@ private mapStatus(stage: any): TicketStatus {
   - Kiểm tra logic ánh xạ (Mapping) từ dữ liệu thô của Odoo sang Domain Entity.
   - Kiểm tra tính đúng đắn của tham số gửi đi (ví dụ: ID phải là kiểu số).
   
+**Ví dụ về Mocking RPC Call:** Để kiểm tra Adapter, chúng tôi giả lập các phản hồi từ Odoo nhằm xác nhận logic mapping và tính chính xác của tham số truyền đi:
+
+```typescript
+test('findById: fetch a single ticket by numeric ID', async () => {
+  callRPCMock.mock.mockImplementation((async (method, params) => {
+    if (params.method === "execute_kw" && params.args.includes("read")) {
+      return [mockOdooDTO];
+    }
+    return null;
+  }) as any);
+```
+
 **Lệnh chạy test:**
 ```bash
 npm run integration-test:odoo
@@ -157,25 +163,11 @@ src/
             └── OdooTicketAdapter.test.ts # File integration test
 ```
 
-### Các lệnh hỗ trợ
-
-| Command | Mô tả | Ví dụ |
-| :--- | :--- | :--- |
-| `ticket list` | Liệt kê tất cả ticket từ Odoo | `npx ts-node src/main.ts ticket list` |
-| `ticket new` | Liệt kê các ticket mới từ Odoo | `npx ts-node src/main.ts ticket new` |
-| `ticket unprocessed` | Liệt kê các ticket chưa xử lý từ Odoo | `npx ts-node src/main.ts ticket unprocessed` |
-| `ticket show <id>` | Hiển thị thông tin chi tiết của ticket theo ID từ Odoo | `npx ts-node src/main.ts ticket show 123` |
-| `ticket create` | Tạo ticket mới (JSON file hoặc Odoo tùy adapter) | `npx ts-node src/main.ts ticket create --title "Lỗi hệ thống" --description "Không thể đăng nhập" --status open --priority high` |
-| `ticket update <id>` | Cập nhật thông tin ticket | `npx ts-node src/main.ts ticket update 123 --status done` |
-
-Các bộ lọc (`--status`, `--priority`, `--tags`) là tùy chọn cho lệnh `list`.
-Tags truyền dưới dạng chuỗi phân cách bởi dấu phẩy.
-
 <a id="sản-phẩm"></a>
 ## VI. Demo sản phẩm
 
 ### Video demo:  
-https://www.youtube.com/watch?v=Q5dS1OPMU9M&feature=youtu.be
+https://www.youtube.com/watch?v=pnYM-fQyH40
 
 Nội dung video bao gồm:
 - Xem danh sách ticket
