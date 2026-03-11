@@ -1,4 +1,4 @@
-# Scenario 1: Vấn đề đăng nhập
+# Scenario 1: Vấn đề đăng nhập (Standard). Một giáo viên gửi email cho support về việc không thể đăng nhập vào hệ thống LMS của MindX. Vấn đề này chỉ ảnh hưởng đến một người dùng này.
 
 ## 1. Bản ghi phiếu Odoo
 
