@@ -1,4 +1,4 @@
-# Scenario 1: Vấn đề Performance (Priority). Bạn nhận được một ticket từ CXO (Class Administrator) báo cáo rằng 15 học viên trong một lớp học trực tuyến đang gặp tình trạng tải trang cực kỳ chậm trong LMS. Lớp học đang diễn ra ngay bây giờ.
+# Scenario 1: Vấn đề Performance (Priority). Bạn nhận được một ticket từ CXO (Class Administrator) báo cáo rằng 15 học viên trong một lớp học trực tuyến đang gặp tình trạng tải trang cực kỳ chậm trong LMS.
 
 ## 1. Bản ghi phiếu Odoo
 

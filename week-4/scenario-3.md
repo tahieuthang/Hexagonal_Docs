@@ -1,4 +1,4 @@
-# Scenario 1: Lỗi nghiêm trọng (Expedite). Nhiều tickets đang tràn vào. Manager team vận hành ping bạn trên Teams. Đây là sự cố Expedite đầu tiên của bạn.
+# Scenario 3: Lỗi nghiêm trọng (Expedite). Nhiều tickets đang tràn vào. Manager team vận hành ping bạn trên Teams. Đây là sự cố Expedite đầu tiên của bạn.
 
 ## 1. Bản ghi phiếu Odoo
 
