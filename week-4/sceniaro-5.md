@@ -12,21 +12,19 @@
 
 ### 2. Step-by-step xử lý (theo 7-step)
 
-**Reception (Tiếp nhận):** Hệ thống ghi nhận 3 phản hồi cùng lúc từ lớp JS-ADV-HN-2412. Thực hiện khởi tạo Ticket chính #00010 trên Odoo và liên kết (Relate) các ticket con để quản lý tập trung trong vòng 10 phút.
+- **Reception (Tiếp nhận):** Hệ thống ghi nhận 3 phản hồi cùng lúc từ lớp JS-ADV-HN-2412. Thực hiện khởi tạo Ticket chính #00010 trên Odoo và liên kết (Relate) các ticket con để quản lý tập trung trong vòng 10 phút.
 
-**Initial Response (Phản hồi ban đầu):** Gửi email xác nhận (ACK) cho CXO trong vòng 15 phút. Thông báo team đang ưu tiên xử lý theo diện Priority và cung cấp giải pháp tạm thời (Workaround) là xem tài liệu PDF để không gián đoạn giờ học.
+- **Initial Response (Phản hồi ban đầu):** Gửi email xác nhận (ACK) cho CXO trong vòng 15 phút. Thông báo team đang ưu tiên xử lý theo diện Priority và cung cấp giải pháp tạm thời (Workaround) là xem tài liệu PDF để không gián đoạn giờ học.
 
-**Diagnosis (Chẩn đoán):** Kiểm tra API Gateway Logs và Monitoring. Phát hiện mã lỗi 403 Forbidden tập trung duy nhất tại Lesson ID: JS-ADV-L3. Xác định nguyên nhân do lỗi phân quyền Asset (Signed URL hết hạn), không phải do đường truyền của người dùng.
+- **Diagnosis (Chẩn đoán):** Kiểm tra API Gateway Logs và Monitoring. Phát hiện mã lỗi 403 Forbidden tập trung duy nhất tại Lesson ID: JS-ADV-L3. Xác định nguyên nhân do lỗi phân quyền Asset (Signed URL hết hạn), không phải do đường truyền của người dùng.
 
-**Resolution (Giải quyết):**
-- Escalation: Chuyển thông tin kỹ thuật cho bộ phận Content Ops/Dev để cấp lại quyền truy cập (Renew Asset).
-- Fix: Dev thực hiện cập nhật lại cấu hình Permission trên Storage. Support Team kiểm tra lại link video trong môi trường ẩn danh -> Video phát ổn định.
+- **Resolution (Giải quyết):** Chuyển thông tin kỹ thuật cho bộ phận Content Ops/Dev để cấp lại quyền truy cập (Renew Asset).
 
-**Communication (Giao tiếp/Cập nhật):** Gửi email cập nhật tiến độ cho CXO báo cáo rằng team đã tìm ra nguyên nhân và đang đợi bộ phận kỹ thuật cấu hình lại (dự kiến 15 phút).
+- **Communication (Giao tiếp/Cập nhật):** Gửi email cập nhật tiến độ cho CXO báo cáo rằng team đã tìm ra nguyên nhân và đang đợi bộ phận kỹ thuật cấu hình lại (dự kiến 15 phút).
 
-**Follow-up (Theo dõi):** Sau khi có xác nhận từ Dev, gửi email thông báo kết quả cho CXO. Nhờ CXO xác nhận lại tình trạng xem video của 12 học viên tại lớp. Ghi nhận phản hồi: "100% học viên đã xem được".
+- **Follow-up (Theo dõi):** Sau khi có xác nhận từ Dev, gửi email thông báo kết quả cho CXO. Nhờ CXO xác nhận lại tình trạng xem video của 12 học viên tại lớp. Ghi nhận phản hồi: "100% học viên đã xem được".
 
-**Trend Analysis (Phân tích xu hướng):** Ghi chép vào hệ thống kiến thức nội bộ (Internal Wiki/Note) về lỗi hết hạn Signed URL khi cập nhật khóa học mới. Đề xuất với team Dev/Content định kỳ kiểm tra hiệu lực của Asset trước khi mở lớp (Release check).
+- **Trend Analysis (Phân tích xu hướng):** Ghi chép vào hệ thống kiến thức nội bộ (Internal Wiki/Note) về lỗi hết hạn Signed URL khi cập nhật khóa học mới. Đề xuất với team Dev/Content định kỳ kiểm tra hiệu lực của Asset trước khi mở lớp (Release check).
   
 ### 3. Email Phản hồi (Email Drafts)
 
@@ -75,21 +73,19 @@
 
 ### 2. Step-by-step xử lý (theo 7-step)
 
-**Reception (Tiếp nhận):** Hệ thống ghi nhận 3 phản hồi cùng lúc từ lớp JS-ADV-HN-2412. Thực hiện khởi tạo Ticket chính #00013 trên Odoo và liên kết (Relate) các ticket con để quản lý tập trung trong vòng 10 phút.
+- **Reception (Tiếp nhận):** Hệ thống ghi nhận 3 phản hồi cùng lúc từ lớp JS-ADV-HN-2412. Thực hiện khởi tạo Ticket chính #00013 trên Odoo và liên kết (Relate) các ticket con để quản lý tập trung trong vòng 10 phút.
 
-**Initial Response (Phản hồi ban đầu):** Gửi email xác nhận (ACK) cho CXO trong vòng 15 phút. Thông báo team đang ưu tiên xử lý theo diện Priority và cung cấp giải pháp tạm thời (Workaround) là xem tài liệu PDF để không gián đoạn giờ học.
+- **Initial Response (Phản hồi ban đầu):** Gửi email xác nhận (ACK) cho CXO trong vòng 15 phút. Thông báo team đang ưu tiên xử lý theo diện Priority và cung cấp giải pháp tạm thời (Workaround) là xem tài liệu PDF để không gián đoạn giờ học.
 
-**Diagnosis (Chẩn đoán):** Phát hiện lỗi không chỉ nằm ở một thiết bị mà xảy ra trên cả Web và Mobile của 12 học viên này. Ghi nhận mã lỗi 504 Gateway Timeout tăng spike. Xác định nguyên nhân do hạ tầng CDN khu vực gặp sự cố đường truyền, gây nghẽn kết nối đến video asset.
+- **Diagnosis (Chẩn đoán):** Phát hiện lỗi không chỉ nằm ở một thiết bị mà xảy ra trên cả Web và Mobile của 12 học viên này. Ghi nhận mã lỗi 504 Gateway Timeout tăng spike. Xác định nguyên nhân do hạ tầng CDN khu vực gặp sự cố đường truyền, gây nghẽn kết nối đến video asset.
 
-**Resolution (Giải quyết):**
-- Escalation: Báo động khẩn cấp cho đội ngũ DevOps/Infra về tình trạng nghẽn CDN.
-- Fix: DevOps thực hiện điều hướng (Failover) luồng traffic sang cụm máy chủ dự phòng. Support Team kiểm tra lại lỗi trên cả 2 thiết bị (Web/Mobile) giả định -> Video đã phát ổn định trở lại.
+- **Resolution (Giải quyết):** Báo động khẩn cấp cho đội ngũ DevOps/Infra về tình trạng nghẽn CDN.
 
-**Communication (Giao tiếp/Cập nhật):** Cập nhật trạng thái cho CXO lớp JS-ADV-HN-2412 mỗi 15 phút về tiến độ điều hướng hạ tầng, giúp giáo viên và học viên tại lớp an tâm chờ đợi.
+- **Communication (Giao tiếp/Cập nhật):** Cập nhật trạng thái cho CXO lớp JS-ADV-HN-2412 mỗi 15 phút về tiến độ điều hướng hạ tầng, giúp giáo viên và học viên tại lớp an tâm chờ đợi.
 
-**Follow-up (Theo dõi):** Sau khi có xác nhận từ Dev, gửi email thông báo kết quả cho CXO. Nhờ CXO xác nhận lại tình trạng xem video của 12 học viên tại lớp. Ghi nhận phản hồi: "100% học viên đã xem được".
+- **Follow-up (Theo dõi):** Sau khi có xác nhận từ Dev, gửi email thông báo kết quả cho CXO. Nhờ CXO xác nhận lại tình trạng xem video của 12 học viên tại lớp. Ghi nhận phản hồi: "100% học viên đã xem được".
 
-**Trend Analysis (Phân tích xu hướng):** Ghi nhận sự cố CDN vào nhật ký vận hành. Đề xuất với team Infra kiểm tra lại tính ổn định của nhà cung cấp CDN tại khu vực này và xây dựng kịch bản tự động chuyển hướng nếu xảy ra lỗi tương tự để giảm thiểu ảnh hưởng cho các lớp học sau.
+- **Trend Analysis (Phân tích xu hướng):** Ghi nhận sự cố CDN vào nhật ký vận hành. Đề xuất với team Infra kiểm tra lại tính ổn định của nhà cung cấp CDN tại khu vực này và xây dựng kịch bản tự động chuyển hướng nếu xảy ra lỗi tương tự để giảm thiểu ảnh hưởng cho các lớp học sau.
   
 ### 3. Email Phản hồi (Email Drafts)
 
@@ -138,19 +134,19 @@
 
 ### 2. Step-by-step xử lý (theo 7-step)
 
-**Reception (Tiếp nhận):** Hệ thống ghi nhận 3 phản hồi cùng lúc từ lớp JS-ADV-HN-2412. Thực hiện khởi tạo Ticket chính #00014 trên Odoo và liên kết (Relate) các ticket con để quản lý tập trung trong vòng 10 phút.
+- **Reception (Tiếp nhận):** Hệ thống ghi nhận 3 phản hồi cùng lúc từ lớp JS-ADV-HN-2412. Thực hiện khởi tạo Ticket chính #00014 trên Odoo và liên kết (Relate) các ticket con để quản lý tập trung trong vòng 10 phút.
 
-**Initial Response (Phản hồi ban đầu):** Gửi email xác nhận (ACK) cho CXO trong vòng 15 phút. Thông báo team đang ưu tiên xử lý theo diện Priority và cung cấp giải pháp tạm thời (Workaround) là xem tài liệu PDF để không gián đoạn giờ học.
+- **Initial Response (Phản hồi ban đầu):** Gửi email xác nhận (ACK) cho CXO trong vòng 15 phút. Thông báo team đang ưu tiên xử lý theo diện Priority và cung cấp giải pháp tạm thời (Workaround) là xem tài liệu PDF để không gián đoạn giờ học.
 
-**Diagnosis (Chẩn đoán):** Tiến hành kiểm tra chéo (Cross-check): Xác định lỗi chỉ xuất hiện trên Chrome phiên bản Desktop của 8 học viên. Nguyên nhân do tiện ích "Adblock Plus" nhận diện nhầm trình phát video mới của LMS là quảng cáo và chặn thực thi script.
+- **Diagnosis (Chẩn đoán):** Tiến hành kiểm tra chéo (Cross-check): Xác định lỗi chỉ xuất hiện trên Chrome phiên bản Desktop của 8 học viên. Nguyên nhân do tiện ích "Adblock Plus" nhận diện nhầm trình phát video mới của LMS là quảng cáo và chặn thực thi script.
 
-**Resolution (Giải quyết):** Soạn tài liệu hướng dẫn nhanh cách tắt Adblock cho tên miền mindx.edu.vn hoặc hướng dẫn học viên sử dụng Tab ẩn danh để học tiếp ngay lập tức.
+- **Resolution (Giải quyết):** Soạn tài liệu hướng dẫn nhanh cách tắt Adblock cho tên miền mindx.edu.vn hoặc hướng dẫn học viên sử dụng Tab ẩn danh để học tiếp ngay lập tức.
 
-**Communication (Giao tiếp/Cập nhật):** Gửi email và nhắn tin trực tiếp cho CXO đại diện lớp, hướng dẫn các bước xử lý phía người dùng. Đề nghị giáo viên hỗ trợ học viên thao tác tại chỗ để kịp tiến độ buổi học.
+- **Communication (Giao tiếp/Cập nhật):** Gửi email và nhắn tin trực tiếp cho CXO đại diện lớp, hướng dẫn các bước xử lý phía người dùng. Đề nghị giáo viên hỗ trợ học viên thao tác tại chỗ để kịp tiến độ buổi học.
 
-**Follow-up (Theo dõi):** Sau khi có xác nhận từ Dev, gửi email thông báo kết quả cho CXO. Nhờ CXO xác nhận lại tình trạng xem video của 12 học viên tại lớp. Ghi nhận phản hồi: "100% học viên đã xem được".
+- **Follow-up (Theo dõi):** Sau khi có xác nhận từ Dev, gửi email thông báo kết quả cho CXO. Nhờ CXO xác nhận lại tình trạng xem video của 12 học viên tại lớp. Ghi nhận phản hồi: "100% học viên đã xem được".
 
-**Trend Analysis (Phân tích xu hướng):** Ghi nhận xung đột giữa Player video và Adblock vào cơ sở dữ liệu lỗi thường gặp (FAQ). Kiến nghị bộ phận Product kiểm tra lại đoạn mã nhúng video để tối ưu hóa, tránh bị các trình chặn quảng cáo nhận diện nhầm trong tương lai, đồng thời bổ sung cảnh báo "Tắt Adblock" ngay trên giao diện video của LMS.
+- **Trend Analysis (Phân tích xu hướng):** Ghi nhận xung đột giữa Player video và Adblock vào cơ sở dữ liệu lỗi thường gặp (FAQ). Kiến nghị bộ phận Product kiểm tra lại đoạn mã nhúng video để tối ưu hóa, tránh bị các trình chặn quảng cáo nhận diện nhầm trong tương lai, đồng thời bổ sung cảnh báo "Tắt Adblock" ngay trên giao diện video của LMS.
   
 ### 3. Email Phản hồi (Email Drafts)
 
