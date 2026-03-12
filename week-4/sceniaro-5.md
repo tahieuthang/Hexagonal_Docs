@@ -65,11 +65,15 @@
 
 ## II. Branch B: Vấn đề Hệ thống/CDN (Lỗi 5xx/Timeout)
 
+* **Giả định: Lỗi lan sang cả các khóa khác. Monitoring báo CDN spike lỗi 504.**
+
+### 1. Bản ghi phiếu Odoo
+
 <img src="images/scenario-5/Screenshot 2026-03-12 153104.png" alt="Mô tả" width="600"/>
 
 **Link ticket trên Odoo:** https://home50.odoo.com/odoo/all-tickets/13
 
-## 2. Step-by-step xử lý (theo 7-step)
+### 2. Step-by-step xử lý (theo 7-step)
 
 **Reception (Tiếp nhận):** Hệ thống ghi nhận 3 phản hồi cùng lúc từ lớp JS-ADV-HN-2412. Thực hiện khởi tạo Ticket chính #00013 trên Odoo và liên kết (Relate) các ticket con để quản lý tập trung trong vòng 10 phút.
 
@@ -124,11 +128,15 @@
 
 ## III. Branch C: Vấn đề Hệ thống/CDN (Lỗi 5xx/Timeout)
 
+* **Giả định: Ẩn danh xem được. Mobile xem được nhưng Web lỗi.**
+  
+### 1. Bản ghi phiếu Odoo
+
 <img src="images/scenario-5/Screenshot 2026-03-12 161341.png" alt="Mô tả" width="600"/>
 
 **Link ticket trên Odoo:** https://home50.odoo.com/odoo/all-tickets/14
 
-## 2. Step-by-step xử lý (theo 7-step)
+### 2. Step-by-step xử lý (theo 7-step)
 
 **Reception (Tiếp nhận):** Hệ thống ghi nhận 3 phản hồi cùng lúc từ lớp JS-ADV-HN-2412. Thực hiện khởi tạo Ticket chính #00014 trên Odoo và liên kết (Relate) các ticket con để quản lý tập trung trong vòng 10 phút.
 
