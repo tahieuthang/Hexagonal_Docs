@@ -17,13 +17,13 @@
 
 <img src="images/scenario-6/Screenshot 2026-03-15 212602.png" alt="Mô tả" width="600"/>
 
-**Email Cập nhật (Escalation Update)**
+**Email Cập nhật tiến độ**
 
 <img src="images/scenario-6/Screenshot 2026-03-15 212649.png" alt="Mô tả" width="600"/>
 
-<img src="images/scenario-6/Screenshot 2026-03-15 212853.png" alt="Mô tả" width="600"/>
-
 **Email bàn giao**
+
+<img src="images/scenario-6/Screenshot 2026-03-15 212853.png" alt="Mô tả" width="600"/>
 
 <img src="images/scenario-6/Screenshot 2026-03-15 212954.png" alt="Mô tả" width="600"/>
 

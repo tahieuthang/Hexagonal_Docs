@@ -55,7 +55,7 @@
 > **TICKET:** #00010 (Odoo) | **Người theo dõi:** Tạ Hiếu Thắng
 > @content-ops @backend-dev
 
-**Email Update điều tra**
+**Email cập nhật điều tra**
 
 <img src="images/scenario-5/Screenshot 2026-03-15 215720.png" alt="Mô tả" width="600"/>
 
@@ -118,11 +118,11 @@
 > **TICKET:** #00007 (Odoo) | **Người theo dõi:** Tạ Hiếu Thắng
 > @devops @infra-team @cto
 
-**Email Update điều tra**
+**Email cập nhật điều tra**
 
 <img src="images/scenario-5/Screenshot 2026-03-15 221315.png" alt="Mô tả" width="600"/>
 
-**Email Xác nhận giải quyết**
+**Email xác nhận giải quyết**
 
 <img src="images/scenario-5/Screenshot 2026-03-15 221336.png" alt="Mô tả" width="600"/>
 

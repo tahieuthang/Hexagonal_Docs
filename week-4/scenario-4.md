@@ -27,7 +27,7 @@
 
 <img src="images/scenario-4/Screenshot 2026-03-14 235153.png" alt="Mô tả" width="600"/>
 
-**Email Thông báo lộ trình & Workaround (Follow-up)**
+**Email xác nhận follow-up**
 
 <img src="images/scenario-4/Screenshot 2026-03-14 235245.png" alt="Mô tả" width="600"/>
 

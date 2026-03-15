@@ -58,12 +58,12 @@ Do tính chất nghiêm trọng của sự cố (Expedite), em đã kích hoạt
 >
 > @senior-engineer @engineer-team @devops
 
-**Email Cập nhật (Escalation Update)**
+**Email cập nhật điều tra**
 
 <img src="images/scenario-3/Screenshot 2026-03-14 232326.png" alt="Mô tả" width="600"/>
 
 
-**Email giải quyết (Resolution)**
+**Email xác nhận giải quyết**
 
 <img src="images/scenario-3/Screenshot 2026-03-14 232434.png" alt="Mô tả" width="600"/>
 
