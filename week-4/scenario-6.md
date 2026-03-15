@@ -1,4 +1,4 @@
-# Scenario 4: Yêu cầu có deadline - Báo cáo cần gấp (Fixed Deadline)
+# Scenario 6: Yêu cầu có deadline - Báo cáo cần gấp (Fixed Deadline)
 
 ## 1. Bản ghi phiếu Odoo
 
