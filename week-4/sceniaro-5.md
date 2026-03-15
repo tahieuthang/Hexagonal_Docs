@@ -52,7 +52,7 @@
 > **YÊU CẦU:** > 1. Kiểm tra và làm mới (Renew) mã truy cập video cho Lesson ID: `JS-ADV-L3`.
 > 2. Rà soát lại phân quyền Folder Asset của khóa học này.
 >
-> **TICKET:** #00010 (Odoo) | **Người theo dõi:** Tạ Hiếu Thắng
+> **TICKET:** #00024 (Odoo) | **Người theo dõi:** Tạ Hiếu Thắng
 > @content-ops @backend-dev
 
 **Email cập nhật điều tra**
@@ -115,7 +115,7 @@
 > **YÊU CẦU:** > 1. Kiểm tra trạng thái kết nối tới CDN Provider.
 > 2. Thực hiện **Failover (Chuyển hướng)** sang cụm máy chủ dự phòng ngay lập tức.
 >
-> **TICKET:** #00007 (Odoo) | **Người theo dõi:** Tạ Hiếu Thắng
+> **TICKET:** #00025 (Odoo) | **Người theo dõi:** Tạ Hiếu Thắng
 > @devops @infra-team @cto
 
 **Email cập nhật điều tra**

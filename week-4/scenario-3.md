@@ -54,7 +54,7 @@ Do tính chất nghiêm trọng của sự cố (Expedite), em đã kích hoạt
 >
 > **CẬP NHẬT TRẠNG THÁI:** Support Team sẽ cập nhật Stakeholders mỗi 15 phút.
 >
-> **TICKET:** #00005 (Odoo)
+> **TICKET:** #00018 (Odoo)
 >
 > @senior-engineer @engineer-team @devops
 
