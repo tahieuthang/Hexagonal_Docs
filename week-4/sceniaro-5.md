@@ -6,9 +6,11 @@
 
 ### 1. Bản ghi phiếu Odoo
 
-<img src="images/scenario-5/Screenshot 2026-03-12 144632.png" alt="Mô tả" width="600"/>
+<img src="images/scenario-5/Screenshot 2026-03-15 215350.png" alt="Mô tả" width="600"/>
 
-**Link ticket trên Odoo:** https://home50.odoo.com/odoo/all-tickets/10
+<img src="images/scenario-5/Screenshot 2026-03-15 215402.png" alt="Mô tả" width="600"/>
+
+**Link ticket trên Odoo:** https://home50.odoo.com/odoo/all-tickets/24
 
 ### 2. Step-by-step xử lý (theo 7-step)
 
@@ -30,7 +32,7 @@
 
 **Email xác nhận ban đầu (ACK)**
 
-<img src="images/scenario-5/Screenshot 2026-03-12 144855.png" alt="Mô tả" width="600"/>
+<img src="images/scenario-5/Screenshot 2026-03-15 215619.png" alt="Mô tả" width="600"/>
 
 **Escalate cho Dev Team**
 
@@ -53,13 +55,13 @@
 > **TICKET:** #00010 (Odoo) | **Người theo dõi:** Tạ Hiếu Thắng
 > @content-ops @backend-dev
 
-**Email Cập nhật (Escalation Update)**
+**Email Update điều tra**
 
-<img src="images/scenario-5/Screenshot 2026-03-12 145042.png" alt="Mô tả" width="600"/>
+<img src="images/scenario-5/Screenshot 2026-03-15 215720.png" alt="Mô tả" width="600"/>
 
-**Email giải quyết (Resolution)**
+**Email xác nhận giải quyết**
 
-<img src="images/scenario-5/Screenshot 2026-03-12 145159.png" alt="Mô tả" width="600"/>
+<img src="images/scenario-5/Screenshot 2026-03-15 215855.png" alt="Mô tả" width="600"/>
 
 ## II. Branch B: Vấn đề Hệ thống/CDN (Lỗi 5xx/Timeout)
 
@@ -67,9 +69,11 @@
 
 ### 1. Bản ghi phiếu Odoo
 
-<img src="images/scenario-5/Screenshot 2026-03-12 153104.png" alt="Mô tả" width="600"/>
+<img src="images/scenario-5/Screenshot 2026-03-15 221008.png" alt="Mô tả" width="600"/>
 
-**Link ticket trên Odoo:** https://home50.odoo.com/odoo/all-tickets/13
+<img src="images/scenario-5/Screenshot 2026-03-15 221018.png" alt="Mô tả" width="600"/>
+
+**Link ticket trên Odoo:** https://home50.odoo.com/odoo/all-tickets/25
 
 ### 2. Step-by-step xử lý (theo 7-step)
 
@@ -91,7 +95,7 @@
 
 **Email xác nhận ban đầu (ACK)**
 
-<img src="images/scenario-5/Screenshot 2026-03-12 153422.png" alt="Mô tả" width="600"/>
+<img src="images/scenario-5/Screenshot 2026-03-15 221257.png" alt="Mô tả" width="600"/>
 
 **Escalate cho Dev Team**
 
@@ -114,13 +118,13 @@
 > **TICKET:** #00007 (Odoo) | **Người theo dõi:** Tạ Hiếu Thắng
 > @devops @infra-team @cto
 
-**Email Cập nhật (Escalation Update)**
+**Email Update điều tra**
 
-<img src="images/scenario-5/Screenshot 2026-03-12 153506.png" alt="Mô tả" width="600"/>
+<img src="images/scenario-5/Screenshot 2026-03-15 221315.png" alt="Mô tả" width="600"/>
 
-**Email giải quyết (Resolution)**
+**Email Xác nhận giải quyết**
 
-<img src="images/scenario-5/Screenshot 2026-03-12 153550.png" alt="Mô tả" width="600"/>
+<img src="images/scenario-5/Screenshot 2026-03-15 221336.png" alt="Mô tả" width="600"/>
 
 ## III. Branch C: Vấn đề Hệ thống/CDN (Lỗi 5xx/Timeout)
 
@@ -128,9 +132,11 @@
   
 ### 1. Bản ghi phiếu Odoo
 
-<img src="images/scenario-5/Screenshot 2026-03-12 161341.png" alt="Mô tả" width="600"/>
+<img src="images/scenario-5/Screenshot 2026-03-15 223013.png" alt="Mô tả" width="600"/>
 
-**Link ticket trên Odoo:** https://home50.odoo.com/odoo/all-tickets/14
+<img src="images/scenario-5/Screenshot 2026-03-15 223026.png" alt="Mô tả" width="600"/>
+
+**Link ticket trên Odoo:** https://home50.odoo.com/odoo/all-tickets/26
 
 ### 2. Step-by-step xử lý (theo 7-step)
 
@@ -152,13 +158,13 @@
 
 **Email xác nhận ban đầu (ACK)**
 
-<img src="images/scenario-5/Screenshot 2026-03-12 161431.png" alt="Mô tả" width="600"/>
+<img src="images/scenario-5/Screenshot 2026-03-15 223707.png" alt="Mô tả" width="600"/>
 
-**Email Cập nhật (Escalation Update)**
+**Email giải quyết**
 
-<img src="images/scenario-5/Screenshot 2026-03-12 161510.png" alt="Mô tả" width="600"/>
+<img src="images/scenario-5/Screenshot 2026-03-15 224005.png" alt="Mô tả" width="600"/>
 
-**Email giải quyết (Resolution)**
+**Email xác nhận giải quyết**
 
 <img src="images/scenario-5/Screenshot 2026-03-12 161616.png" alt="Mô tả" width="600"/>
 
