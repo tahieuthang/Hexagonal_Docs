@@ -2,11 +2,11 @@
 
 ## 1. Bản ghi phiếu Odoo
 
-<img src="images/scenario-4/Screenshot 2026-03-14 235015.png" alt="Mô tả" width="600"/>
+<img src="images/scenario-4/Screenshot 2026-03-17 215054.png" alt="Mô tả" width="600"/>
 
-<img src="images/scenario-4/Screenshot 2026-03-14 235030.png" alt="Mô tả" width="600"/>
+<img src="images/scenario-4/Screenshot 2026-03-17 215103.png" alt="Mô tả" width="600"/>
 
-**Link ticket trên Odoo:** https://home50.odoo.com/odoo/all-tickets/19
+**Link ticket trên Odoo:** https://home50.odoo.com/odoo/all-tickets/27
 
 ## 1.5. Quy trình Chẩn đoán & Xử lý (Technical Diagnosis)
 
@@ -25,11 +25,11 @@
 
 **Email xác nhận ban đầu (ACK)**
 
-<img src="images/scenario-4/Screenshot 2026-03-14 235153.png" alt="Mô tả" width="600"/>
+<img src="images/scenario-4/Screenshot 2026-03-17 220053.png" alt="Mô tả" width="600"/>
 
 **Email xác nhận follow-up**
 
-<img src="images/scenario-4/Screenshot 2026-03-14 235245.png" alt="Mô tả" width="600"/>
+<img src="images/scenario-4/Screenshot 2026-03-17 220146.png" alt="Mô tả" width="600"/>
 
 ## 3. Giải thích phân loại
 
