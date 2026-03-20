@@ -1,0 +1,26 @@
+[
+    {
+      "employee_id": "NV001",
+      "full_name": "Lương Thị Nguyệt Hà",
+      "email": "ha.ltn@mock-company.com",
+      "status": "active",
+      "department": "HR",
+      "last_login": "2026-03-15"
+    },
+    {
+      "employee_id": "NV002",
+      "full_name": "Nguyễn Văn A",
+      "email": "a.nv@mock-company.com",
+      "status": "resigned",
+      "department": "IT",
+      "last_login": "2025-12-01"
+    },
+    {
+      "employee_id": "NV003",
+      "full_name": "Trần Thị B",
+      "email": "b.tt@mock-company.com",
+      "status": "active",
+      "department": "Sale",
+      "last_login": "2026-03-19"
+    }
+  ]
