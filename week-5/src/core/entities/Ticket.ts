@@ -12,8 +12,6 @@ export enum TicketPriority {
   HIGH = 'high',
   URGENT = 'urgent'
 }
-// export type TicketPriority = string;
-export type TicketTag = string;
 
 export class Ticket {
   public readonly id: string
@@ -23,7 +21,7 @@ export class Ticket {
   public priority: TicketPriority
   public createdAt: Date
   public updatedAt?: Date | undefined
-  public tags: TicketTag[]
+  public tags: string[]
   constructor(
     id: string,
     title: string,
@@ -32,7 +30,7 @@ export class Ticket {
     priority: TicketPriority,
     createdAt: Date,
     updatedAt?: Date | undefined,
-    tags?: TicketTag[],
+    tags?: string[],
   ) {
     this.id = id
     this.title = title.trim()
@@ -67,7 +65,7 @@ export class Ticket {
     )
   }
 
-  public update(data: Partial<{ status: string; note: string; tags: string[] }>): void {
+  public update(data: Partial<{ status: string; tags: string[] }>): void {
     if(data.status !== undefined) this.status = data.status as TicketStatus
     if (data.tags !== undefined) {
       this.tags = Array.from(new Set([...this.tags, ...data.tags]));

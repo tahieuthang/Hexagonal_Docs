@@ -8,9 +8,10 @@
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
     "module": "esnext",
-    "moduleResolution": "bundler",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
     "target": "esnext",
-    "types": [],
+    "types": ["node"],
 
     // Path Mapping
     "baseUrl": "./src",

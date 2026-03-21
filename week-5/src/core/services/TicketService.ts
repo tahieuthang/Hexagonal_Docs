@@ -3,6 +3,7 @@ import type { IHRService } from "@ports/outbound/IHRService"
 import type { IMailService } from "@ports/outbound/IMailService"
 import type { TicketServicePort } from "@ports/inbound/TicketServicePort"
 import { Ticket, TicketStatus } from "@entities/Ticket"
+import { formatCustomerName } from  "@utils/formatCustomerName"
 import { TicketNotFoundError } from "@errors/TicketNotFoundError"
 import { title } from "node:process"
 
@@ -40,33 +41,35 @@ export class TicketService implements TicketServicePort {
         return score >= 1.5
       });
       for(const ticket of tickets) {
-        const employee = await this.hrService.checkEmployeeStatus(ticket.name)
-  
+        const employee = await this.hrService.checkEmployeeStatus(ticket.description)
         // Case 1: Không tìm thấy
         if(!employee) {
           await this.ticketRepository.updateTicket(ticket.id, {
             note: "Không tìm thấy nhân viên trong hệ thống HR, cần bộ phận HR review thủ công",
           })
           await this.mailService.sendResolutionEmail('tahieuthang.ngot@gmail.com', 'EMPLOYEE_NOT_FOUND', {
-            name: ticket.name,
-            ticketId: ticket.id
+            customer: formatCustomerName(ticket.description ?? "khách hàng"),
+            ticketId: ticket.id,
+            ticketTitle: ticket.title
           })
+          console.warn(`[Ticket #${ticket.id}] Skip: Employee not found in HR system.`);
           continue
         }
   
         // Case 2: Account đang active
         if(employee.status === "active") {
           Ticket.update({
-            title: ticket.title,
-            note: ticket.note,
+            status: ticket.status,
+            tags: ticket.tags
           })
           await this.ticketRepository.updateTicket(ticket.id, {
             status: "In Progress",
             tags: ["login", "Auto Resolved"]
           })
           await this.mailService.sendResolutionEmail(employee.email, 'RESOLUTION_SUCCESS', {
-            name: employee.name,
-            ticketId: ticket.id
+            customer: formatCustomerName(employee.name ?? "khách hàng"),
+            ticketId: ticket.id,
+            ticketTitle: ticket.title
           })
           await this.ticketRepository.updateTicket(ticket.id, {
             status: "Resolved",

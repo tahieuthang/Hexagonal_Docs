@@ -1,11 +1,5 @@
-interface Employee {
-    id: string;
-    name: string;
-    email: string;
-    department: string;
-    status: 'active' | 'resigned' | 'on_leave';
-}
+import type { Employee } from "@enums/EmployeeDTO";
 
 export interface IHRService {
-  checkEmployeeStatus(name: string): Promise<Employee | null>;
+  checkEmployeeStatus(name: string): Promise<Employee | null>
 }
