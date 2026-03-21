@@ -1,8 +1,19 @@
 import { InvalidDataError } from "@errors/InvalidDataError"
 import { TicketNotFoundError } from "@errors/TicketNotFoundError";
-export type TicketStatus = 'open' | 'in-progress' | 'done' | 'cancelled'
-export type TicketPriority = 'low' | 'medium' | 'high' | 'urgent'
-export type TicketTag = 'bug' | 'feature' | 'task' | 'fix';
+export enum TicketStatus {
+  NEW = 'new',
+  IN_PROGRESS = 'in_progress',
+  RESOLVED = 'resolved',
+  FAILED = 'failed'
+}
+export enum TicketPriority {
+  LOW = 'low',
+  MEDIUM = 'medium',
+  HIGH = 'high',
+  URGENT = 'urgent'
+}
+// export type TicketPriority = string;
+export type TicketTag = string;
 
 export class Ticket {
   public readonly id: string
@@ -10,7 +21,6 @@ export class Ticket {
   public description: string
   public status: TicketStatus
   public priority: TicketPriority
-  public note?: string | undefined
   public createdAt: Date
   public updatedAt?: Date | undefined
   public tags: TicketTag[]
@@ -21,7 +31,6 @@ export class Ticket {
     status: TicketStatus,
     priority: TicketPriority,
     createdAt: Date,
-    note?: string,
     updatedAt?: Date | undefined,
     tags?: TicketTag[],
   ) {
@@ -31,7 +40,6 @@ export class Ticket {
     this.status = status
     this.priority = priority
     this.createdAt = createdAt
-    this.note = note || undefined
     this.updatedAt = updatedAt || undefined
     this.tags = tags || []
     this.validate()
@@ -44,21 +52,6 @@ export class Ticket {
     if(!this.description || this.description.trim() === '') {
       throw new InvalidDataError('Mô tả ticket không được để trống hoặc chỉ chứa dấu cách')
     }
-    const validateStatus: TicketStatus[] = ['open', 'in-progress', 'done']
-    if(!this.status || !validateStatus.includes(this.status)) {
-      throw new InvalidDataError('Trạng thái status không hợp lệ')
-    }
-    const validatePriority: TicketPriority[] = ['low', 'medium', 'high']
-    if(!this.priority || !validatePriority.includes(this.priority)) {
-      throw new InvalidDataError('Trạng thái priority không hợp lệ')
-    }
-    const validateTags: TicketTag[] = ['bug', 'feature', 'task', 'fix']
-    if (this.tags.length > 0) {
-      const hasInvalidTag = !this.tags.every(tag => validateTags.includes(tag))
-      if (hasInvalidTag) {
-        throw new InvalidDataError(`Tag không hợp lệ. Chỉ chấp nhận các tag ${validateTags.join(', ')}`)
-      }
-    }
   }
 
   static formRaw(data: any): Ticket {
@@ -69,7 +62,6 @@ export class Ticket {
       data.status as TicketStatus,
       data.priority as TicketPriority,
       data.createdAt,
-      data.note,
       data.updatedAt,
       data.tags || [],
     )
@@ -77,7 +69,9 @@ export class Ticket {
 
   public update(data: Partial<{ status: string; note: string; tags: string[] }>): void {
     if(data.status !== undefined) this.status = data.status as TicketStatus
-    if(data.note !== undefined) this.note = data.note
+    if (data.tags !== undefined) {
+      this.tags = Array.from(new Set([...this.tags, ...data.tags]));
+    }
     this.updatedAt = new Date()
     this.validate()
   }

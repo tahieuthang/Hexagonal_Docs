@@ -1,12 +1,5 @@
-import { Ticket } from "@entities/Ticket"
-interface Employee {
-    id: string
-    name: string
-    email: string
-    department: string
-    status: 'active' | 'resigned' | 'on_leave'
-}
+export type EmailTemplate = 'RESOLUTION_SUCCESS' | 'EMPLOYEE_NOT_FOUND' | 'EMPLOYEE_RESIGNED'
 
 export interface IMailService {
-  sendResolutionEmail(employee: Employee, ticket: Ticket): Promise<void>
+  sendResolutionEmail(toEmail: string, template: EmailTemplate, data: { name: string, ticketId: string }): Promise<void>
 }
