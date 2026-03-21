@@ -18,7 +18,7 @@ export class HRAdapter implements IHRService {
       }
     }
   
-    async checkEmployeeStatus(name: string): Promise<Employee | null> {
+    public async checkEmployeeStatus(name: string): Promise<Employee | null> {
       const employees = await this.readRaw()
       const checkEmployee = employees.find((e: Employee) =>
         e.name.trim().toLowerCase() === name.trim().toLowerCase()

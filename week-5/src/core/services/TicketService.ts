@@ -18,7 +18,7 @@ export class TicketService implements TicketServicePort {
     let tickets = await this.ticketRepository.searchTickets()
     if(tickets) {
       tickets = tickets.filter(ticket => {
-        if (ticket.status !== 'open' && ticket.status !== 'new') return false
+        if (ticket.status !== 'new') return false
 
         const title = ticket.title.toLowerCase()
         const desc = ticket.description?.toLowerCase() || ""
@@ -59,12 +59,10 @@ export class TicketService implements TicketServicePort {
         // Case 2: Account đang active
         if(employee.status === "active") {
           Ticket.update({
-            status: ticket.status,
-            tags: ticket.tags
+            status: ticket.status
           })
           await this.ticketRepository.updateTicket(ticket.id, {
-            status: "In Progress",
-            tags: ["login", "Auto Resolved"]
+            status: TicketStatus.IN_PROGRESS
           })
           await this.mailService.sendResolutionEmail(employee.email, 'RESOLUTION_SUCCESS', {
             customer: formatCustomerName(employee.name ?? "khách hàng"),
@@ -72,8 +70,8 @@ export class TicketService implements TicketServicePort {
             ticketTitle: ticket.title
           })
           await this.ticketRepository.updateTicket(ticket.id, {
-            status: "Resolved",
-            note: "[Bot] Đã xử lý xong và gửi mail thành công."
+            status: TicketStatus.RESOLVED,
+            note: "[Bot] Đã xử lý xong và gửi mail xử lý thành công."
           })
           continue
         }
@@ -81,7 +79,7 @@ export class TicketService implements TicketServicePort {
         // Case 3: Đã nghỉ việc
         if(employee.status === "resigned") {
           await this.ticketRepository.updateTicket(ticket.id, {
-            note: "Tình trạng: nhân viên đã nghỉ việc hệ thống HR, cần bộ phận HR review thủ công",
+            note: "Tình trạng: nhân viên đã nghỉ việc trong hệ thống HR, cần bộ phận HR review thủ công",
           })
           continue
         }

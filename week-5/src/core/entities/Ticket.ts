@@ -67,9 +67,6 @@ export class Ticket {
 
   public update(data: Partial<{ status: string; tags: string[] }>): void {
     if(data.status !== undefined) this.status = data.status as TicketStatus
-    if (data.tags !== undefined) {
-      this.tags = Array.from(new Set([...this.tags, ...data.tags]));
-    }
     this.updatedAt = new Date()
     this.validate()
   }
