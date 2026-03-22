@@ -1,4 +1,5 @@
-export function formatCustomerName(rawName?: string): string {
-    if (!rawName) return "Customer";
-    return rawName.includes('@') ? rawName.split('@')[0] : rawName;
+export function formatCustomerName(rawName: string): string {
+  if (!rawName) return "Customer";
+  const namePart = rawName.split('@')[0] ?? rawName;
+  return namePart;
 }

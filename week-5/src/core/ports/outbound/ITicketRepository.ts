@@ -1,4 +1,4 @@
-import { Ticket } from "@entities/Ticket";
+import { Ticket, TicketStatus } from "@entities/Ticket";
 
 export interface TicketFilter {
   title?: string[];
@@ -8,5 +8,5 @@ export interface TicketFilter {
 
 export interface ITicketRepository {
   searchTickets(): Promise<Ticket[]>;
-  updateTicket(id: string, data: Partial<Ticket>): Promise<void>;
+  updateTicket(id: string, data: Partial<{ status: TicketStatus; note: string }>): Promise<void>;
 }

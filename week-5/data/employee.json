@@ -1,26 +1,138 @@
 [
-    {
-      "employee_id": "NV001",
-      "full_name": "Lương Thị Nguyệt Hà",
-      "email": "ha.ltn@mock-company.com",
-      "status": "active",
-      "department": "HR",
-      "last_login": "2026-03-15"
-    },
-    {
-      "employee_id": "NV002",
-      "full_name": "Nguyễn Văn A",
-      "email": "a.nv@mock-company.com",
-      "status": "resigned",
-      "department": "IT",
-      "last_login": "2025-12-01"
-    },
-    {
-      "employee_id": "NV003",
-      "full_name": "Trần Thị B",
-      "email": "b.tt@mock-company.com",
-      "status": "active",
-      "department": "Sale",
-      "last_login": "2026-03-19"
-    }
-  ]
+  {
+    "employee_id": "NV001",
+    "name": "Nguyễn Hữu Thình",
+    "email": "tahieuthang.ngot@gmail.com",
+    "status": "active",
+    "department": "Accounting",
+    "last_login": "2026-03-15"
+  },
+  {
+    "employee_id": "NV002",
+    "name": "Võ Thị Hồng Phấn",
+    "email": "tahieuthang.ngot@gmail.com",
+    "status": "resigned",
+    "department": "IT Support",
+    "last_login": "2025-12-01"
+  },
+  {
+    "employee_id": "NV003",
+    "name": "Hoàng Kim",
+    "email": "tahieuthang.ngot@gmail.com",
+    "status": "active",
+    "department": "Training",
+    "last_login": "2026-03-19"
+  },
+  {
+    "employee_id": "NV004",
+    "name": "Trần Mai Thi",
+    "email": "tahieuthang.ngot@gmail.com",
+    "status": "active",
+    "department": "HR",
+    "last_login": "2026-03-20"
+  },
+  {
+    "employee_id": "NV005",
+    "name": "Nguyễn Ngọc Thảo Vy",
+    "email": "tahieuthang.ngot@gmail.com",
+    "status": "active",
+    "department": "Operations",
+    "last_login": "2026-03-18"
+  },
+  {
+    "employee_id": "NV006",
+    "name": "tramlnp@mindx.com.vn", 
+    "email": "tahieuthang.ngot@gmail.com",
+    "status": "active",
+    "department": "Technical Support",
+    "last_login": "2026-03-17"
+  },
+  {
+    "employee_id": "NV007",
+    "name": "Mindx Phạm Ngũ Lão",
+    "email": "tahieuthang.ngot@gmail.com",
+    "status": "active",
+    "department": "Hub Manager",
+    "last_login": "2026-03-10"
+  },
+  {
+    "employee_id": "NV008",
+    "name": "Hoàng Văn Vũ",
+    "email": "tahieuthang.ngot@gmail.com",
+    "status": "resigned",
+    "department": "Sales",
+    "last_login": "2025-11-20"
+  },
+  {
+    "employee_id": "NV009",
+    "name": "MindX Bắc Ninh",
+    "email": "tahieuthang.ngot@gmail.com",
+    "status": "active",
+    "department": "Admin",
+    "last_login": "2026-03-05"
+  },
+  {
+    "employee_id": "NV010",
+    "name": "Do Thu Trang",
+    "email": "tahieuthang.ngot@gmail.com",
+    "status": "active",
+    "department": "Marketing",
+    "last_login": "2026-03-14"
+  },
+  {
+    "employee_id": "NV011",
+    "name": "TE Lê Thế Khiêm",
+    "email": "tahieuthang.ngot@gmail.com",
+    "status": "active",
+    "department": "Academic",
+    "last_login": "2026-03-01"
+  },
+  {
+    "employee_id": "NV012",
+    "name": "Nguyễn Võ Minh Nhựt",
+    "email": "tahieuthang.ngot@gmail.com",
+    "status": "resigned",
+    "department": "Tech Team",
+    "last_login": "2026-03-16"
+  },
+  {
+    "employee_id": "NV013",
+    "name": "Như Quỳnh",
+    "email": "tahieuthang.ngot@gmail.com",
+    "status": "resigned",
+    "department": "Consultant",
+    "last_login": "2025-09-30"
+  },
+  {
+    "employee_id": "NV014",
+    "name": "support@mindx-help.freshdesk.com",
+    "email": "tahieuthang.ngot@gmail.com",
+    "status": "active",
+    "department": "System Automation",
+    "last_login": "2026-03-20"
+  },
+  {
+    "employee_id": "NV015",
+    "name": "Mã Tiểu Linh",
+    "email": "tahieuthang.ngot@gmail.com",
+    "status": "active",
+    "department": "Academic",
+    "last_login": "2026-03-21"
+  },
+  {
+    "employee_id": "NV016",
+    "name": "Lâm Thanh Hà",
+    "email": "tahieuthang.ngot@gmail.com",
+    "status": "active",
+    "department": "Academic",
+    "last_login": "2026-03-21"
+  },
+  {
+    "employee_id": "NV017",
+    "name": "Trần Hạo Cơ",
+    "email": "tahieuthang.ngot@gmail.com",
+    "status": "resigned",
+    "department": "Consultant",
+    "last_login": "2025-12-21"
+  }
+]

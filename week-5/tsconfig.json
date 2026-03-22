@@ -2,8 +2,8 @@
   // Visit https://aka.ms/tsconfig to read more about this file
   "compilerOptions": {
     // File Layout
-    // "rootDir": "./src",
-    // "outDir": "./dist",
+    "rootDir": "./src",
+    "outDir": "./dist",
 
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
@@ -18,12 +18,13 @@
     "paths": {
       "@ports/*": ["core/ports/*"],
       "@services/*": ["core/services/*"],
-      "@entities/*": ["core/entites/*"],
+      "@entities/*": ["core/entities/*"],
       "@errors/*": ["core/errors/*"],
       "@adapters/*": ["adapters/*"],
-      "@utils/*": ["untils/*"],
+      "@utils/*": ["utils/*"],
       "@enums/*": ["core/enums/*"]
     },
+    "removeComments": true,
     // For nodejs:
     // "lib": ["esnext"],
     // "types": ["node"],
@@ -49,11 +50,17 @@
     // Recommended Options
     "strict": true,
     "jsx": "react-jsx",
-    "verbatimModuleSyntax": true,
+    "verbatimModuleSyntax": false,
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
     "skipLibCheck": true,
   },
-  "exclude": ["dist", "tests"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "tests"],
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node",
+    "transpileOnly": true
+  }
 }

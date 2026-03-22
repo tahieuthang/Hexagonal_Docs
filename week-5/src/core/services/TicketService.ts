@@ -1,11 +1,9 @@
-import type { ITicketRepository, TicketFilter } from "@ports/outbound/ITicketRepository"
+import type { ITicketRepository } from "@ports/outbound/ITicketRepository"
 import type { IHRService } from "@ports/outbound/IHRService"
-import type { IMailService } from "@ports/outbound/IMailService"
+import type { IMailService, EmailTemplate } from "@ports/outbound/IMailService"
 import type { TicketServicePort } from "@ports/inbound/TicketServicePort"
-import { Ticket, TicketStatus } from "@entities/Ticket"
+import { TicketStatus } from "@entities/Ticket"
 import { formatCustomerName } from  "@utils/formatCustomerName"
-import { TicketNotFoundError } from "@errors/TicketNotFoundError"
-import { title } from "node:process"
 
 export class TicketService implements TicketServicePort {
   constructor(
@@ -24,31 +22,36 @@ export class TicketService implements TicketServicePort {
         const desc = ticket.description?.toLowerCase() || ""
         const content = `${title} ${desc}`
 
-        const loginKeywords = /mật khẩu|password|login|đăng nhập|reset|truy cập|tài khoản|account|cấp lại|lấy lại|quên/g
+        const loginKeywords = /mật khẩu|password|login|đăng nhập|reset|truy cập|tài khoản|account|cấp lại|lấy lại|quên/i
         if (!loginKeywords.test(content)) return false
     
-        const exclusionKeywords = /feature|góp ý|tuyển dụng|nhân viên mới|outlook|nội bộ|hiển thị|không thấy|không hiện|sai thông tin|thanh toán|hủy/g
+        const exclusionKeywords = /feature|góp ý|tuyển dụng|nhân viên mới|outlook|nội bộ|hiển thị|không thấy|không hiện|sai thông tin|thanh toán|hủy/i
         if (exclusionKeywords.test(content)) return false
     
         let score = 0
 
-        if (/cấp lại mật khẩu|quên mật khẩu|reset password|không đăng nhập/.test(content)) score += 2
+        if (/cấp lại mật khẩu|quên mật khẩu|reset password|không đăng nhập|cấp lại tài khoản|không truy cập|không vào được/i.test(content)) score += 2
 
-        if (/mật khẩu|password|login|đăng nhập|reset/.test(content)) score += 1
+        if (/mật khẩu|password|login|đăng nhập|reset/i.test(content)) score += 1
 
-        if (/tài khoản|account|truy cập|lấy lại|quên/.test(content)) score += 0.5
+        if (/mail|ecount|tms|tài khoản|account|truy cập|lấy lại|quên/i.test(content)) score += 0.5
 
         return score >= 1.5
       });
+      console.log(tickets);
+      
+      
       for(const ticket of tickets) {
-        const employee = await this.hrService.checkEmployeeStatus(ticket.description)
+        const employee = await this.hrService.checkEmployeeStatus(ticket.description.replace(/<\/?[^>]+(>|$)/g, ""))
+        console.log(`[TEST] Đang kiểm tra nhân viên: ${employee?.name} - Trạng thái: ${employee?.status}`);
+
         // Case 1: Không tìm thấy
         if(!employee) {
           await this.ticketRepository.updateTicket(ticket.id, {
             note: "Không tìm thấy nhân viên trong hệ thống HR, cần bộ phận HR review thủ công",
           })
           await this.mailService.sendResolutionEmail('tahieuthang.ngot@gmail.com', 'EMPLOYEE_NOT_FOUND', {
-            customer: formatCustomerName(ticket.description ?? "khách hàng"),
+            customer: formatCustomerName(ticket.description || "khách hàng"),
             ticketId: ticket.id,
             ticketTitle: ticket.title
           })
@@ -58,20 +61,28 @@ export class TicketService implements TicketServicePort {
   
         // Case 2: Account đang active
         if(employee.status === "active") {
-          Ticket.update({
-            status: ticket.status
+          ticket.update({
+            status: TicketStatus.RESOLVED
           })
+          const title = ticket.title.toLowerCase();
+          let emailTemplate: EmailTemplate = 'RESOLUTION_SUCCESS';
+          
+          const isAccountIssue = /cấp lại tài khoản|tạo tài khoản|cấp lại account|tài khoản ecount/i.test(title);
+          
+          if (isAccountIssue) {
+              emailTemplate = 'ACCOUNT_RECREATED';
+          }
           await this.ticketRepository.updateTicket(ticket.id, {
             status: TicketStatus.IN_PROGRESS
           })
-          await this.mailService.sendResolutionEmail(employee.email, 'RESOLUTION_SUCCESS', {
-            customer: formatCustomerName(employee.name ?? "khách hàng"),
+          await this.mailService.sendResolutionEmail(employee.email, emailTemplate, {
+            customer: formatCustomerName(employee.name || "khách hàng"),
             ticketId: ticket.id,
             ticketTitle: ticket.title
           })
           await this.ticketRepository.updateTicket(ticket.id, {
             status: TicketStatus.RESOLVED,
-            note: "[Bot] Đã xử lý xong và gửi mail xử lý thành công."
+            note: `[Bot] Đã phân loại: ${isAccountIssue ? 'Cấp lại TK' : 'Reset Pass'} và gửi mail tương ứng.`
           })
           continue
         }
@@ -79,7 +90,12 @@ export class TicketService implements TicketServicePort {
         // Case 3: Đã nghỉ việc
         if(employee.status === "resigned") {
           await this.ticketRepository.updateTicket(ticket.id, {
-            note: "Tình trạng: nhân viên đã nghỉ việc trong hệ thống HR, cần bộ phận HR review thủ công",
+            note: "Tình trạng nhân viên 'đã nghỉ việc' trong hệ thống HR, cần bộ phận HR review thủ công",
+          })
+          await this.mailService.sendResolutionEmail(employee.email, 'EMPLOYEE_RESIGNED', {
+            customer: formatCustomerName(employee.name ?? "khách hàng"),
+            ticketId: ticket.id,
+            ticketTitle: ticket.title
           })
           continue
         }

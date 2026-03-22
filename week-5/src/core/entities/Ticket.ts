@@ -3,8 +3,9 @@ import { TicketNotFoundError } from "@errors/TicketNotFoundError";
 export enum TicketStatus {
   NEW = 'new',
   IN_PROGRESS = 'in_progress',
+  ON_HOLD = 'on_hold',
   RESOLVED = 'resolved',
-  FAILED = 'failed'
+  CANCELLED = 'cancelled'
 }
 export enum TicketPriority {
   LOW = 'low',
@@ -21,7 +22,6 @@ export class Ticket {
   public priority: TicketPriority
   public createdAt: Date
   public updatedAt?: Date | undefined
-  public tags: string[]
   constructor(
     id: string,
     title: string,
@@ -30,7 +30,6 @@ export class Ticket {
     priority: TicketPriority,
     createdAt: Date,
     updatedAt?: Date | undefined,
-    tags?: string[],
   ) {
     this.id = id
     this.title = title.trim()
@@ -39,7 +38,6 @@ export class Ticket {
     this.priority = priority
     this.createdAt = createdAt
     this.updatedAt = updatedAt || undefined
-    this.tags = tags || []
     this.validate()
   }
 
@@ -61,7 +59,6 @@ export class Ticket {
       data.priority as TicketPriority,
       data.createdAt,
       data.updatedAt,
-      data.tags || [],
     )
   }
 

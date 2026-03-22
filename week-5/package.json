@@ -1,12 +1,14 @@
 {
   "name": "week-5",
   "version": "1.0.0",
-  "description": "**Project:** Helpdesk Automation System (MindX Training Week 4)  \r **Engineer:** Tạ Hiếu Thắng",
+  "description": "**Project:** Helpdesk Automation System (MindX Training Week 5)  \r **Engineer:** Tạ Hiếu Thắng",
   "main": "index.js",
   "scripts": {
-    "start": "node dist/index.js",
-    "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
-    "build": "tsc"
+    "start": "node dist/main.js",
+    "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/main.ts",
+    "clean": "rimraf dist",
+    "build": "npm run clean && tsc && tsc-alias",
+    "automate": "node --loader ts-node/esm dist/main.js ticket automate --scenario login-issue"
   },
   "type": "module",
   "keywords": [],
@@ -14,12 +16,17 @@
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^25.5.0",
+    "@types/nodemailer": "^7.0.11",
     "nodemon": "^3.1.14",
+    "rimraf": "^6.1.3",
     "ts-node": "^10.9.2",
+    "tsc-alias": "^1.8.16",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.9.3"
   },
   "dependencies": {
     "axios": "^1.13.6",
-    "dotenv": "^17.3.1"
+    "dotenv": "^17.3.1",
+    "nodemailer": "^8.0.3"
   }
 }
