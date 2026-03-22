@@ -146,17 +146,17 @@ Bot tự động bóc tách tên/email từ description (đã qua xử lý làm 
 - Dữ liệu đầu vào: Nhân viên `TE Lê Thế Khiêm` (Active).
 - Hành động của Bot: * Xác nhận nhân viên đang làm việc -> Chuyển trạng thái ticket từ `New` → `In Progress` → `Resolved` -> Gửi Email thành công
 - Bằng chứng (Screenshot)
- - Kết quả script terminal
+  - Kết quả script terminal
 
- <img src="images/Demo_1_pic.png" alt="Mô tả" width="600"/>
+   <img src="images/Demo_1_pic.png" alt="Mô tả" width="600"/>
 
- - Odoo Ticket Chatter ghi chú các hành động automation
+  - Odoo Ticket Chatter ghi chú các hành động automation
 
- <img src="images/Ticket_demo_1.png" alt="Mô tả" width="600"/>
+   <img src="images/Ticket_demo_1.png" alt="Mô tả" width="600"/>
 
- - Email phản hồi
+  - Email phản hồi
 
- <img src="images/Screenshot 2026-03-22 214407.png" alt="Mô tả" width="600"/>
+   <img src="images/Screenshot 2026-03-22 214407.png" alt="Mô tả" width="600"/>
 
 **Case 2: Từ chối xử lý tự động (Employee Resigned)**
 
@@ -166,10 +166,10 @@ Bot tự động bóc tách tên/email từ description (đã qua xử lý làm 
 - Bằng chứng (Screenshot)
   - Odoo Ticket Chatter ghi chú các hành động automation
 
-  <img src="images/Screenshot 2026-03-22 214538.png" alt="Mô tả" width="600"/>
+   <img src="images/Screenshot 2026-03-22 214538.png" alt="Mô tả" width="600"/>
 
   - Email phản hồi
 
-  <img src="images/Screenshot 2026-03-22 214459.png" alt="Mô tả" width="600"/>
+   <img src="images/Screenshot 2026-03-22 214459.png" alt="Mô tả" width="600"/>
 
 ---
