@@ -79,7 +79,7 @@ Triển khai giải pháp tự động hóa theo tư duy **Operating Engineer** 
 
 - **Selected Issue:** Khôi phục tài khoản và cấp lại mật khẩu.  
 - **Pattern:** Tài khoản bị khóa tự động sau 30 ngày không hoạt động (Luật hệ thống).  
-- **Operating Engineer Approach:** Thay vì can thiệp sửa mã nguồn (Core) của hệ thống LMS để thay đổi luật 30 ngày (tốn thời gian và rủi ro bảo mật), chúng ta xây dựng script tự động hóa để “vét” và xử lý hậu quả ngay khi có yêu cầu từ người dùng.
+- **Operating Engineer Approach:** Thay vì can thiệp sửa mã nguồn (Core) của hệ thống LMS để thay đổi luật 30 ngày (tốn thời gian và rủi ro bảo mật), chúng ta xây dựng script tự động hóa để “quét” và xử lý hậu quả ngay khi có yêu cầu từ người dùng.
 
 ---
 
@@ -150,7 +150,7 @@ Bot tự động bóc tách tên/email từ description (đã qua xử lý làm 
 
  <img src="images/Demo_1_pic.png" alt="Mô tả" width="600"/>
 
- - Odoo Ticket Chatter ghi chú các hành động
+ - Odoo Ticket Chatter ghi chú các hành động automation
 
  <img src="images/Ticket_demo_1.png" alt="Mô tả" width="600"/>
 
@@ -164,12 +164,12 @@ Bot tự động bóc tách tên/email từ description (đã qua xử lý làm 
 - Dữ liệu đầu vào: Nhân viên có trạng thái `resigned` trên hệ thống HR.
 - Hành động của Bot: * Nhận diện nhân viên đã nghỉ việc -> Dừng tiến trình tự động để đảm bảo bảo mật -> Cập nhật Note vào ticket: "Tình trạng nhân viên 'đã nghỉ việc', cần bộ phận HR review thủ công" -> Gửi Email thông báo Case `EMPLOYEE_RESIGNED`
 - Bằng chứng (Screenshot)
- - Odoo Ticket Chatter ghi chú các hành động
+  - Odoo Ticket Chatter ghi chú các hành động automation
 
- <img src="images/Screenshot 2026-03-22 214538.png" alt="Mô tả" width="600"/>
+  <img src="images/Screenshot 2026-03-22 214538.png" alt="Mô tả" width="600"/>
 
- - Email phản hồi
+  - Email phản hồi
 
- <img src="images/Screenshot 2026-03-22 214459.png" alt="Mô tả" width="600"/>
+  <img src="images/Screenshot 2026-03-22 214459.png" alt="Mô tả" width="600"/>
 
 ---
