@@ -28,3 +28,5 @@
 - Add Note: [Bot] Đã gửi email hướng dẫn đăng nhập thành công vào lúc ${time}. Ticket tự động đóng.
 
 - Gắn thêm Tag: Auto_Resolved để sau này ông giáo làm báo cáo thống kê.
+
+npm run automate
