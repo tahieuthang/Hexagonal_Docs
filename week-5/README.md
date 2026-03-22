@@ -57,19 +57,15 @@ Dựa trên biểu đồ Priority (`Screenshot 2026-03-19 105213.png`), ta thấ
 
 **Báo cáo phân loại lỗi (Tag Chart):**
 
-<img src="images/tags/Screenshot 2026-03-19 104720.png" alt="Mô tả" width="600"/>
-
-<img src="images/tags/Screenshot 2026-03-19 104744.png" alt="Mô tả" width="600"/>
-
-<img src="images/tags/Screenshot 2026-03-19 104756.png" alt="Mô tả" width="600"/>
+|  |  |
+|--|--|
+| <img src="images/tags/Screenshot 2026-03-19 104720.png" width="100%"/> | <img src="images/tags/Screenshot 2026-03-19 104744.png" width="100%"/> |
 
 **Báo cáo mức độ ưu tiên (Priority Chart):**
 
-<img src="images/priority/Screenshot 2026-03-19 105221.png" alt="Mô tả" width="600"/>
-
-<img src="images/priority/Screenshot 2026-03-19 105229.png" alt="Mô tả" width="600"/>
-
-<img src="images/priority/Screenshot 2026-03-19 105213.png" alt="Mô tả" width="600"/>
+|  |  |
+|--|--|
+| <img src="images/priority/Screenshot 2026-03-19 105221.png" width="100%"/> | <img src="images/priority/Screenshot 2026-03-19 105229.png" width="100%"/> |
 
 # II. Days 3-4: Automation Implementation
 
@@ -175,3 +171,5 @@ Bot tự động bóc tách tên/email từ description (đã qua xử lý làm 
  - Email phản hồi
 
  <img src="images/Screenshot 2026-03-22 214459.png" alt="Mô tả" width="600"/>
+
+---
